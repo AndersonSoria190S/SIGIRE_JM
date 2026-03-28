@@ -123,3 +123,9 @@ AUTH_USER_MODEL = 'accounts.User'
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
+
+# Redirigir a la página principal después de iniciar sesión con éxito
+LOGIN_REDIRECT_URL = 'home'
+
+# Redirigir a la página principal después de cerrar sesión
+LOGOUT_REDIRECT_URL = 'home'
