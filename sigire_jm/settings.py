@@ -61,7 +61,7 @@ ROOT_URLCONF = 'sigire_jm.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -124,8 +124,6 @@ AUTH_USER_MODEL = 'accounts.User'
 
 STATIC_URL = 'static/'
 
-# Redirigir a la página principal después de iniciar sesión con éxito
-LOGIN_REDIRECT_URL = 'home'
-
-# Redirigir a la página principal después de cerrar sesión
-LOGOUT_REDIRECT_URL = 'home'
+# settings.py
+LOGIN_REDIRECT_URL = 'dashboard'  
+LOGOUT_REDIRECT_URL = 'home'      
