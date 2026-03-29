@@ -26,7 +26,7 @@ class Grado(models.Model):
 #CLASE GESTION
 class Gestion(models.Model):
 
-    año = models.IntegerField()
+    anio = models.IntegerField()
     estado = models.BooleanField(default=True)
 
     def __str__(self):

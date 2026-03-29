@@ -16,20 +16,35 @@
         <div class="card">
             <div class="card-header">
                 <h3><i class="fa-solid fa-calendar-days"></i> Gestiones Escolares</h3>
-                <button class="btn-sm btn-add" title="Añadir Gestión"><i class="fa-solid fa-plus"></i></button>
+                
+                {% if mostrar_btn_gestion %}
+                <a href="{% url 'crear_gestion' %}" 
+                   class="btn-sm btn-add" 
+                   title="Crear Gestión {{ siguiente_anio }}" 
+                   style="text-decoration: none;"
+                   onclick="return confirm('⚠️ ¿Estás seguro de crear la Gestión {{ siguiente_anio }}? \n\nEsta acción activará el nuevo año escolar y cerrará automáticamente la gestión actual. Esta acción no se puede deshacer de forma sencilla.');">
+                    <i class="fa-solid fa-plus"></i> Crear {{ siguiente_anio }}
+                </a>
+                {% endif %}
             </div>
             <div class="card-body">
                 <ul class="list-group">
                     {% for gestion in gestiones %}
                     <li class="list-item">
-                        <span class="gestion-year">{{ gestion.año }}</span>
+                        <span class="gestion-year">{{ gestion.anio }}</span>
                         <div class="actions">
                             {% if gestion.estado %}
                                 <span class="badge active"><i class="fa-solid fa-check"></i> Activa</span>
                             {% else %}
+                            {% if gestion.anio >= anio_actual %}
                                 <a href="{% url 'toggle_gestion' gestion.pk %}" class="btn-toggle" title="Activar esta gestión">
-                                    <i class="fa-solid fa-power-off"></i> Activar
+                                <i class="fa-solid fa-power-off"></i> Activar
                                 </a>
+                            {% else %}
+                                <span class="badge" style="background: #e2e8f0; color: #64748b; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;">
+                                <i class="fa-solid fa-lock"></i> Cerrada
+                                </span>
+                            {% endif %}
                             {% endif %}
                         </div>
                     </li>

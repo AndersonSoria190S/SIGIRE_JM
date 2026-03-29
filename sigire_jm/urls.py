@@ -23,4 +23,6 @@ urlpatterns = [
     path('estructura/', academic_views.estructura_academica, name='estructura_academica'),
 
     path('gestion/toggle/<int:pk>/', academic_views.toggle_gestion, name='toggle_gestion'),
+    
+    path('gestion/nueva/', academic_views.crear_gestion, name='crear_gestion'),
 ]
