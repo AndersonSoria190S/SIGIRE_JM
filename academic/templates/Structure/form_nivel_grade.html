@@ -1,0 +1,157 @@
+{% extends 'Registration/base_admin.html' %}
+{% load static %}
+
+{% block page_title %}
+  Añadir Nivel y Grado
+{% endblock %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}" />
+
+  <div class="academic-dashboard">
+    <div class="header-section">
+      <h2>Estructura de Niveles y Grados</h2>
+      <p>Gestiona los niveles educativos y los grados de la institución.</p>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div style="padding: 12px; border-radius: 6px; margin-bottom: 20px; font-weight: 600; border-left: 4px solid;
+                {% if message.tags == 'error' %}
+                    background-color: #fef2f2; color: #dc2626; border-color: #dc2626;
+                {% elif message.tags == 'warning' %}
+                    background-color: #fffbeb; color: #92400e; border-color: #f59e0b;
+                {% else %}
+                    background-color: #d1fae5; color: #065f46; border-color: #10b981;
+                {% endif %}">
+                <i class="fa-solid 
+                    {% if message.tags == 'error' %}fa-circle-xmark
+                    {% elif message.tags == 'warning' %}fa-triangle-exclamation
+                    {% else %}fa-circle-check{% endif %}"></i> 
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="grid-container" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="card">
+        <div class="card-header" style="background-color: #f8fafc;">
+          <h3 style="color: #0ea5e9;">
+            <i class="fa-solid fa-layer-group"></i>
+            {% if editando %}
+              Editar Nivel: {{ form_nivel.instance.nombre }}
+            {% else %}
+              1. Crear Nivel
+            {% endif %}
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 5px;">{{ form_nivel.nombre.label }}</label>
+              {{ form_nivel.nombre }}
+              {% if form_nivel.nombre.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 5px; font-weight: 600;">
+                  <i class="fa-solid fa-circle-exclamation"></i> {{ form_nivel.nombre.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+
+            <button type="submit"
+              name="btn_guardar_nivel"
+              style="padding: 10px 15px; border: none; background: {% if editando %}
+                #10b981
+              {% else %}
+                #0ea5e9
+              {% endif %}; color: white; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.3s;">
+              <i class="fa-solid {% if editando %}
+                  fa-floppy-disk
+                {% else %}
+                  fa-plus
+                {% endif %}">
+
+              </i>
+              {% if editando %}
+                Actualizar Nivel
+              {% else %}
+                Guardar Nivel
+              {% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header" style="background-color: #f8fafc;">
+          <h3 style="color: #f59e0b;">
+            <i class="fa-solid fa-graduation-cap"></i>
+            {% if editando_grado %}
+              Editar Grado
+            {% else %}
+              2. Crear Grado
+            {% endif %}
+          </h3>
+        </div>
+        <div class="card-body">
+          <form method="post">
+            {% csrf_token %}
+
+            {% if form_grado.non_field_errors %}
+              {% for error in form_grado.non_field_errors %}
+                <div style="background-color: #fef2f2; color: #dc2626; padding: 12px; border-radius: 6px; margin-bottom: 15px; border: 1px solid #fee2e2; font-weight: 600;">
+                  <i class="fa-solid fa-triangle-exclamation"></i> {{ error }}
+                </div>
+              {% endfor %}
+            {% endif %}
+
+            <div style="margin-bottom: 15px;">
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 5px;">{{ form_grado.nivel.label }}</label>
+              {{ form_grado.nivel }}
+              {% if form_grado.nivel.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 5px; font-weight: 600;">
+                  <i class="fa-solid fa-circle-exclamation"></i> {{ form_grado.nivel.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+
+            <div style="margin-bottom: 20px;">
+              <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 5px;">{{ form_grado.nombre.label }}</label>
+              {{ form_grado.nombre }}
+              {% if form_grado.nombre.errors %}
+                <div style="color: #dc2626; font-size: 0.85rem; margin-top: 5px; font-weight: 600;">
+                  <i class="fa-solid fa-circle-exclamation"></i> {{ form_grado.nombre.errors.0 }}
+                </div>
+              {% endif %}
+            </div>
+
+            <button type="submit"
+              name="btn_guardar_grado"
+              style="padding: 10px 15px; border: none; background: {% if editando_grado %}
+                #10b981
+              {% else %}
+                #f59e0b
+              {% endif %}; color: white; border-radius: 6px; font-weight: 600; cursor: pointer; width: 100%; transition: 0.3s;">
+              <i class="fa-solid {% if editando_grado %}
+                  fa-floppy-disk
+                {% else %}
+                  fa-plus
+                {% endif %}">
+
+              </i>
+              {% if editando_grado %}
+                Actualizar Grado
+              {% else %}
+                Guardar Grado
+              {% endif %}
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 25px; text-align: right;">
+      <a href="{% url 'estructura_academica' %}" style="padding: 10px 15px; text-decoration: none; color: #475569; background: #e2e8f0; border-radius: 6px; font-weight: 600;"><i class="fa-solid fa-arrow-left"></i> Volver al Panel</a>
+    </div>
+  </div>
+{% endblock %}
