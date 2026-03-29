@@ -25,4 +25,18 @@ urlpatterns = [
     path('gestion/toggle/<int:pk>/', academic_views.toggle_gestion, name='toggle_gestion'),
     
     path('gestion/nueva/', academic_views.crear_gestion, name='crear_gestion'),
+    
+    path('estructura/nivel-grado/nuevo/', academic_views.crear_nivel_grado, name='crear_nivel_grado'),
+    
+    path('nivel/editar/<int:pk>/', academic_views.editar_nivel, name='editar_nivel'),
+    
+    path('nivel/eliminar/<int:pk>/', academic_views.eliminar_nivel, name='eliminar_nivel'),
+    
+    path('grado/editar/<int:pk>/', academic_views.editar_grado, name='editar_grado'),
+    
+    path('grado/eliminar/<int:pk>/', academic_views.eliminar_grado, name='eliminar_grado'),
+    
+    path('paralelo/nuevo/', academic_views.crear_paralelo, name='crear_paralelo'),
+    
+    path('paralelo/eliminar/<int:pk>/', academic_views.eliminar_paralelo, name='eliminar_paralelo'),
 ]
