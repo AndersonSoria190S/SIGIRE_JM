@@ -7,12 +7,14 @@ from django.core.mail import send_mail
 from django.utils.crypto import get_random_string
 from django.conf import settings  
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from .forms import RegistroPersonalForm
 from .models import User
 from .decorators import only_director, only_administrative
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy
 from .forms import CustomPasswordChangeForm
+
 
 # 1. Vista Pública
 def home(request):
@@ -33,10 +35,31 @@ def dashboard(request):
 @only_director
 def list_personal(request):
 
-    personal = User.objects.filter(is_active=True)
+    mostrar_inactivos = request.GET.get('inactivos') == 'true'
+    query_busqueda = request.GET.get('q', '').strip() 
+    rol_filtro = request.GET.get('rol', '') 
+
+    if mostrar_inactivos:
+        personal = User.objects.filter(is_active=False)
+    else:
+        personal = User.objects.filter(is_active=True)
+    
+    if query_busqueda:
+        personal = personal.filter(
+            Q(cedula_identidad__icontains=query_busqueda) |
+            Q(first_name__icontains=query_busqueda) |
+            Q(last_name__icontains=query_busqueda) |
+            Q(celular__icontains=query_busqueda)
+        )
+
+    if rol_filtro:
+        personal = personal.filter(rol=rol_filtro)
     
     return render(request, 'Registration/list_personal.html', {
-        'personal': personal
+        'personal': personal,
+        'mostrar_inactivos': mostrar_inactivos,
+        'query_busqueda': query_busqueda, 
+        'rol_filtro': rol_filtro,
     })
 
 # 5. Registro de Personal (RF1 - Solo Director)
@@ -140,8 +163,62 @@ def eliminar_personal(request, pk):
 class UserPasswordChangeView(PasswordChangeView):
     form_class = CustomPasswordChangeForm
     template_name = 'Registration/change_password.html'
-    success_url = reverse_lazy('dashboard') # A donde va después de cambiarla
+    success_url = reverse_lazy('dashboard')
 
     def form_valid(self, form):
         messages.success(self.request, "¡Tu contraseña ha sido actualizada con éxito!")
         return super().form_valid(form)
+    
+@login_required
+@only_director
+def reactivar_personal(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    
+    usuario.is_active = True
+    
+    password_temporal = get_random_string(length=10)
+    usuario.set_password(password_temporal)
+
+    usuario.save()
+    
+    asunto = 'Reactivación de Cuenta - UE Jesús María'
+    mensaje = (
+        f"Hola {usuario.first_name},\n\n"
+        f"Tu cuenta administrativa ha sido reactivada en el sistema.\n"
+        f"Usuario: {usuario.username}\n"
+        f"Nueva contraseña temporal: {password_temporal}\n\n"
+        f"Por seguridad, te pedimos que cambies tu contraseña inmediatamente al ingresar."
+    )
+    
+    try:
+        
+        send_mail(
+            asunto, 
+            mensaje, 
+            settings.DEFAULT_FROM_EMAIL, 
+            [usuario.email],
+            fail_silently=False,
+        )
+        messages.success(request, f"El usuario {usuario.username} ha sido reactivado. Se enviaron las nuevas credenciales a {usuario.email}.")
+    except Exception as e:
+        print(f"DEBUG: Error al enviar correo de reactivación: {e}")
+        messages.warning(request, f"Usuario reactivado ({usuario.username}), pero falló el envío del correo con la nueva contraseña. Revise la consola.")
+    
+    return redirect('list_personal')
+
+@login_required
+@only_director
+def eliminar_personal_fisico(request, pk):
+    usuario = get_object_or_404(User, pk=pk)
+    
+    if usuario == request.user:
+        messages.error(request, "Error crítico: No puedes eliminar tu propia cuenta.")
+        return redirect('/personal/?inactivos=true')
+        
+    nombre = usuario.username
+
+    usuario.delete() 
+    
+    messages.success(request, f"¡Completado! El usuario '{nombre}' ha sido eliminado definitivamente de la base de datos.")
+    
+    return redirect('/personal/?inactivos=true')

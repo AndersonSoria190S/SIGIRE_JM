@@ -22,6 +22,10 @@ urlpatterns = [
 
     path('personal/eliminar/<str:pk>/', accounts_views.eliminar_personal, name='eliminar_personal'),
     
+    path('personal/reactivar/<str:pk>/', accounts_views.reactivar_personal, name='reactivar_personal'),
+
+    path('personal/eliminar-definitivo/<str:pk>/', accounts_views.eliminar_personal_fisico, name='eliminar_personal_fisico'),
+
     path('password-change/', UserPasswordChangeView.as_view(), name='password_change'),
 
     path('estructura/', academic_views.estructura_academica, name='estructura_academica'),

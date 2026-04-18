@@ -4,15 +4,65 @@
 {% block page_title %}Gestión de Personal{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'accounts/css/list_personal.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/list_personal.css' %}?v=10">
 
 <div class="table-container">
     
-    <div class="table-header">
+    <div class="table-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
         <h3>Personal Administrativo</h3>
-        <a href="{% url 'registrar_personal' %}" class="btn-nuevo">
-            <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Personal
-        </a>
+        
+        <div style="display: flex; gap: 15px; align-items: center;">
+            {% if not mostrar_inactivos %}
+            <a href="{% url 'registrar_personal' %}" class="btn-nuevo">
+                <i class="fa-solid fa-user-plus"></i> Registrar Nuevo Personal
+            </a>
+            {% endif %}
+
+            <div class="toggle-container">
+                <span style="font-size: 0.85rem;">Ver Inactivos</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggleInactivos" {% if mostrar_inactivos %}checked{% endif %} onchange="toggleVista(this)">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="search-container">
+        <form method="GET" action="" class="search-form">
+            {% if mostrar_inactivos %}
+                <input type="hidden" name="inactivos" value="true">
+            {% endif %}
+
+            <div class="search-group text-search">
+                <label class="search-label">Buscar por C.I., Nombre o Celular:</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input type="text" name="q" value="{{ query_busqueda|default:'' }}" placeholder="Ej: 7455337 o Mauricio" class="search-input">
+                </div>
+            </div>
+
+            <div class="search-group select-search">
+                <label class="search-label">Filtrar por Cargo:</label>
+                <select name="rol" class="search-select">
+                    <option value="">Todos los cargos</option>
+                    <option value="director" {% if rol_filtro == "director" %}selected{% endif %}>Director(a)</option>
+                    <option value="secretaria" {% if rol_filtro == "secretaria" %}selected{% endif %}>Secretaria(o)</option>
+                </select>
+            </div>
+
+            <div class="search-actions">
+                <button type="submit" class="btn-search">
+                    <i class="fa-solid fa-filter"></i> Filtrar
+                </button>
+
+                {% if query_busqueda or rol_filtro %}
+                    <a href="?{% if mostrar_inactivos %}inactivos=true{% endif %}" class="btn-clear" title="Limpiar búsqueda">
+                        <i class="fa-solid fa-eraser"></i>
+                    </a>
+                {% endif %}
+            </div>
+        </form>
     </div>
 
     <table class="tabla-personal">
@@ -36,7 +86,10 @@
                     <br>
                     <small style="color: var(--text-light);">@{{ usuario.username }}</small>
                 </td>
-                <td>{{ usuario.cedula_identidad }} {{ usuario.complemento|default:"" }} <span style="color: var(--text-light);">{{ usuario.expedido }}</span></td>
+                <td>
+                    {{ usuario.cedula_identidad }} {{ usuario.complemento|default:"" }} 
+                    <span style="color: var(--text-light)">{{ usuario.expedido }}</span>
+                </td>
                 <td>{{ usuario.celular }}</td>
                 <td>
                     <span class="badge {{ usuario.rol }}">
@@ -56,30 +109,65 @@
                 </td>
                 <td>
                     <div class="action-buttons">
-                        <a href="{% url 'editar_personal' usuario.cedula_identidad %}" class="btn-edit" title="Editar Datos">
-                            <i class="fa-solid fa-pen-to-square"></i>
-                        </a>
-                        
-                        {% if usuario != request.user %}
-                        <a href="{% url 'eliminar_personal' usuario.pk %}" 
-                           class="btn-delete" 
-                           title="Desactivar Usuario"
-                           onclick="return confirm('¿Está seguro de desactivar a {{ usuario.first_name }}? Ya no podrá ingresar al sistema.');">
-                            <i class="fa-solid fa-user-slash"></i>
-                        </a>
+                        {% if usuario.is_active %}
+                            <a href="{% url 'editar_personal' usuario.cedula_identidad %}" class="btn-edit" title="Editar Datos">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            
+                            {% if usuario != request.user %}
+                            <a href="{% url 'eliminar_personal' usuario.pk %}" 
+                               class="btn-delete alerta-eliminar" 
+                               data-nombre="al usuario {{ usuario.first_name }}"
+                               data-extra="El usuario no podrá ingresar al sistema, pero sus registros históricos se mantendrán."
+                               title="Desactivar Usuario">
+                                <i class="fa-solid fa-user-slash"></i>
+                            </a>
+                            {% endif %}
+                        {% else %}
+                            <a href="{% url 'reactivar_personal' usuario.pk %}" 
+                               class="btn-reactivate alerta-eliminar" 
+                               data-nombre="al usuario {{ usuario.first_name }} para que vuelva a trabajar"
+                               data-extra="Se le generará una nueva contraseña y se le enviará por correo."
+                               title="Reactivar Usuario">
+                                <i class="fa-solid fa-user-check"></i> Reactivar
+                            </a>
+
+                            {% if usuario.inscripcion_set.count == 0 %}
+                            <a href="{% url 'eliminar_personal_fisico' usuario.pk %}" 
+                               class="btn-delete-db alerta-eliminar" 
+                               data-nombre="al usuario {{ usuario.username }} PERMANENTEMENTE"
+                               data-extra="ADVERTENCIA: Esta acción borrará al usuario por completo de la base de datos."
+                               title="Eliminar de la Base de Datos">
+                                <i class="fa-solid fa-trash-can"></i> Borrar
+                            </a>
+                            {% endif %}
                         {% endif %}
                     </div>
                 </td>
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" class="empty-state">
-                    <i class="fa-solid fa-info-circle"></i>
-                    No hay personal registrado en el sistema.
+                <td colspan="7" class="empty-state text-center">
+                    <i class="fa-solid fa-info-circle fa-2x"></i><br>
+                    {% if mostrar_inactivos %}
+                        No hay personal inactivo en la papelera.
+                    {% else %}
+                        No hay personal registrado en el sistema.
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
+
+<script>
+    function toggleVista(checkbox) {
+        if (checkbox.checked) {
+            window.location.href = "?inactivos=true";
+        } else {
+            window.location.href = window.location.pathname;
+        }
+    }
+</script>
 {% endblock %}

@@ -40,6 +40,8 @@ class Tutor(models.Model):
 
     def __str__(self):
         return f"{self.nombres} {self.apellidos}"
+    
+    estado = models.BooleanField(default=True)
 
 #CLASE PARENTESCO
 class Parentesco(models.Model):

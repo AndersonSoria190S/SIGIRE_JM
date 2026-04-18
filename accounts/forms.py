@@ -32,8 +32,20 @@ class RegistroPersonalForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+    
         for field in self.fields.values():
             field.widget.attrs.update({'class': 'form-control'})
+
+        if self.instance and self.instance.pk:
+            campos_bloqueados = ['cedula_identidad', 'complemento', 'expedido']
+            
+            for campo in campos_bloqueados:
+        
+                self.fields[campo].disabled = True
+        
+                self.fields[campo].widget.attrs.update({
+                    'style': 'background-color: #e2e8f0; color: #64748b; cursor: not-allowed; opacity: 1;'
+                })
 
     def clean_first_name(self):
         nombre = self.cleaned_data.get('first_name')

@@ -6,6 +6,7 @@ from django.db import models
 class Nivel(models.Model):
 
     nombre = models.CharField(max_length=50)
+    estado = models.BooleanField(default=True)
 
     def __str__(self):
         return self.nombre
@@ -14,6 +15,7 @@ class Nivel(models.Model):
 class Grado(models.Model):
     nivel = models.ForeignKey(Nivel, on_delete=models.CASCADE, related_name='grados')
     nombre = models.CharField(max_length=50)
+    estado = models.BooleanField(default=True)
 
     class Meta:
         constraints = [
@@ -42,6 +44,7 @@ class Paralelo(models.Model):
     grado = models.ForeignKey(Grado, on_delete=models.CASCADE, related_name='paralelos')
     letra = models.CharField(max_length=2)
     cupo_max = models.PositiveIntegerField(default=30)
+    estado = models.BooleanField(default=True)
 
     class Meta:
         constraints = [

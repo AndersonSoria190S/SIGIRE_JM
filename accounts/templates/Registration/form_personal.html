@@ -4,17 +4,18 @@
 {% block page_title %}Registrar Nuevo Personal{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'accounts/css/form_personal.css' %}">
+<link rel="stylesheet" href="{% static 'accounts/css/form_personal.css' %}?v=6">
 
 <div class="form-container">
     <div class="form-card">
         <div class="form-header">
-    <i class="fa-solid {% if edit_mode %}fa-user-pen{% else %}fa-user-plus{% endif %}"></i>
-    <h3>{% if edit_mode %}Editar Personal: {{ usuario.get_full_name }}{% else %}Datos del Nuevo Usuario{% endif %}</h3>
-    <p>{% if edit_mode %}Actualice la información del administrativo.{% else %}Complete la información para dar de alta a un nuevo administrativo.{% endif %}</p>
-</div>
+            <i class="fa-solid {% if edit_mode %}fa-user-pen{% else %}fa-user-plus{% endif %}"></i>
+            <h3>{% if edit_mode %}Editar Personal: {{ usuario.get_full_name }}{% else %}Datos del Nuevo Usuario{% endif %}</h3>
+            
+            <p>{% if edit_mode %}Actualice la información del administrativo.{% else %}Complete la información para registrar un nuevo usuario administrativo. Se enviará un correo electrónico con sus credenciales de acceso.{% endif %}</p>
+        </div>
 
-        <form method="post" novalidate>
+        <form method="post" novalidate id="form-personal">
             {% csrf_token %}
             
             <div class="grid-form">
@@ -26,23 +27,23 @@
                             <span class="help-text">{{ field.help_text }}</span>
                         {% endif %}
                         {% for error in field.errors %}
-                            <span class="error-text">{{ error }}</span>
+                            <span class="error-text"><i class="fa-solid fa-circle-exclamation"></i> {{ error }}</span>
                         {% endfor %}
                     </div>
                 {% endfor %}
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-save">
+                <button type="submit" class="btn-save" id="btn-submit">
                     <i class="fa-solid fa-check"></i> Finalizar Registro
                 </button>
                 <a href="{% url 'list_personal' %}" class="btn-cancel">
-                    Cancelar
+                    Cancelar y Volver
                 </a>
             </div>
         </form>
     </div>
 </div>
 
-<script src="{% static 'accounts/js/form_personal.js' %}"></script>
+<script src="{% static 'accounts/js/form_personal.js' %}?v=2"></script>
 {% endblock %}
