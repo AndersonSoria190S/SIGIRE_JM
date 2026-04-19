@@ -38,44 +38,36 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // 2. --- LÓGICA DE DETECCIÓN DE CAMBIOS ---
     const form = document.getElementById("form-personal");
     const btnSubmit = document.getElementById("btn-submit");
 
     if (form && btnSubmit) {
-        // Capturamos el estado inicial de todos los campos
         const initialData = new FormData(form);
         const snapshot = {};
         for (let [key, value] of initialData.entries()) {
             snapshot[key] = value;
         }
 
-        // Función para verificar si algo cambió
         const verificarCambios = () => {
             const currentData = new FormData(form);
             let huboCambios = false;
 
             for (let [key, value] of currentData.entries()) {
-                // Comparamos el valor actual con el que tomamos al cargar la página
                 if (snapshot[key] !== value) {
                     huboCambios = true;
                     break;
                 }
             }
             
-            // Habilitar o deshabilitar botón basado en los cambios
             btnSubmit.disabled = !huboCambios;
         };
 
-        // Escuchamos 'input' para texto y 'change' para selects/checkboxes
         form.addEventListener('input', verificarCambios);
         form.addEventListener('change', verificarCambios);
 
-        // 3. --- LÓGICA DE ENVÍO CON SWEETALERT ---
         form.addEventListener("submit", function(e) {
             e.preventDefault();
 
-            // Identificamos si es edición (CI deshabilitado suele ser un buen indicador)
             const isEditMode = ciInput && ciInput.disabled;
 
             const swalTitle = isEditMode ? '¿Guardar cambios?' : '¿Confirmar Registro?';

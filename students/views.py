@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from .models import Tutor, Estudiante, Parentesco
-from .forms import TutorForm,EstudianteForm
+from .forms import TutorForm,EstudianteForm, EditarEstudianteForm
 from django.urls import reverse
 from django.utils import timezone
 from django.db.models import Q
@@ -125,8 +125,35 @@ def eliminar_tutor(request, pk):
 
 @login_required
 def list_estudiantes(request):
-    estudiantes = Estudiante.objects.all()
-    return render(request, 'Student/list_estudiantes.html', {'estudiantes': estudiantes})
+
+    query = request.GET.get('search', '').strip()
+    genero_filtro = request.GET.get('genero', '')
+    ver_inactivos = request.GET.get('inactivos') == 'on'
+
+    estudiantes = Estudiante.objects.all().order_by('apellido_paterno')
+
+    if ver_inactivos:
+        estudiantes = estudiantes.filter(estado=False)
+    else:
+        estudiantes = estudiantes.filter(estado=True)
+
+    if query:
+        estudiantes = estudiantes.filter(
+            Q(nombres__icontains=query) |
+            Q(apellido_paterno__icontains=query) |
+            Q(apellido_materno__icontains=query) |
+            Q(ci_nro__icontains=query)
+        ).distinct()
+
+    if genero_filtro:
+        estudiantes = estudiantes.filter(genero=genero_filtro)
+
+    return render(request, 'Student/list_estudiantes.html', {
+        'estudiantes': estudiantes,
+        'search_query': query,
+        'genero_filter': genero_filtro,
+        'ver_inactivos': ver_inactivos
+    })
 
 #REGISTRAR ESTUDIANTE 
 
@@ -179,3 +206,91 @@ def crear_estudiante(request):
     }
 
     return render(request, 'Student/form_student.html', context)
+
+@login_required
+def eliminar_estudiante_fisico(request, pk):
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+
+    if estudiante.inscripcion_set.exists():
+        messages.error(request, "Error de seguridad: El estudiante tiene inscripciones históricas.")
+        return redirect('/estudiantes/?inactivos=on')
+
+    relacion = estudiante.parentesco_set.first()
+    if relacion:
+        tutor = relacion.tutor
+    
+        otros_hijos = tutor.parentesco_set.exclude(estudiante=estudiante).count()
+
+        if otros_hijos > 0:
+            messages.error(request, "Error: No se puede eliminar. El tutor tiene otros estudiantes asociados.")
+            return redirect('/estudiantes/?inactivos=on')
+        else:
+            tutor.delete()
+
+    nombre = f"{estudiante.nombres} {estudiante.apellido_paterno}"
+    estudiante.delete()
+    
+    messages.success(request, f"¡Completado! El estudiante {nombre} y su tutor han sido eliminados de la base de datos.")
+    return redirect('/estudiantes/?inactivos=on')
+
+@login_required
+def desactivar_estudiante(request, pk):
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+   
+    estudiante.estado = False
+    estudiante.save()
+    
+    messages.warning(request, f"El estudiante {estudiante.nombres} ha sido desactivado.")
+    return redirect('list_estudiantes')
+
+@login_required
+def reactivar_estudiante(request, pk):
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+ 
+    estudiante.estado = True
+    estudiante.save()
+    
+    messages.success(request, f"El estudiante {estudiante.nombres} ha sido reactivado.")
+    return redirect('/estudiantes/?inactivos=on')
+
+@login_required
+def editar_estudiante(request, pk):
+    estudiante = get_object_or_404(Estudiante, pk=pk)
+    
+    # 1. Desglosar CI de forma robusta
+    full_ci = estudiante.cedula_identidad.strip().upper()
+    partes = full_ci.split() # Separa "27382332-1A" de "PT"
+    
+    ci_base = partes[0] if len(partes) > 0 else ""
+    expedido = partes[1] if len(partes) > 1 else ""
+    
+    if '-' in ci_base:
+        nro, comp = ci_base.split('-')
+    else:
+        nro, comp = ci_base, ""
+
+    if request.method == "POST":
+        form = EditarEstudianteForm(request.POST, instance=estudiante)
+        if form.is_valid():
+            form.save()
+            messages.success(request, f"Datos de {estudiante.nombres} actualizados.")
+            return redirect('list_estudiantes')
+    else:
+        form = EditarEstudianteForm(instance=estudiante)
+
+    
+    DEPARTAMENTOS = [
+        ('LP', 'La Paz'), ('OR', 'Oruro'), ('PT', 'Potosí'), 
+        ('CB', 'Cochabamba'), ('SC', 'Santa Cruz'), ('BN', 'Beni'), 
+        ('PA', 'Pando'), ('TJ', 'Tarija'), ('CH', 'Chuquisaca')
+    ]
+
+    return render(request, 'Student/form_student.html', {
+        'form': form,
+        'estudiante': estudiante,
+        'es_edicion': True,
+        'ci_nro_val': nro,
+        'ci_comp_val': comp,
+        'ci_exp_val': expedido,
+        'departamentos': DEPARTAMENTOS 
+    })

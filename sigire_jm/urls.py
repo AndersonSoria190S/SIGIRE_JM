@@ -59,5 +59,13 @@ urlpatterns = [
     path('crear-estudiante/', students_views.crear_estudiante, name='crear_estudiante'),
     
     path('estudiantes/', students_views.list_estudiantes, name='list_estudiantes'),
+    
+    path('desactivar/<str:pk>/', students_views.desactivar_estudiante, name='desactivar_estudiante'),
+    
+    path('reactivar/<str:pk>/', students_views.reactivar_estudiante, name='reactivar_estudiante'),
+    
+    path('eliminar-definitivo/<str:pk>/', students_views.eliminar_estudiante_fisico, name='eliminar_estudiante_fisico'),
+
+    path('editar/<str:pk>/', students_views.editar_estudiante, name='editar_estudiante'),
 
 ]

@@ -118,3 +118,14 @@ class EstudianteForm(forms.ModelForm):
             estudiante.save()
 
         return estudiante
+    
+class EditarEstudianteForm(forms.ModelForm):
+    class Meta:
+        model = Estudiante
+        fields = [
+            'nombres', 'apellido_paterno', 'apellido_materno', 
+            'fecha_nacimiento', 'genero', 'direccion', 'correo_electronico'
+        ]
+        widgets = {
+            'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),
+        }

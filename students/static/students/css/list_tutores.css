@@ -16,7 +16,7 @@
 
 /* --- Contenedor y Animación --- */
 .list-container-wrapper { 
-    max-width: 1200px; /* Un poco más ancho para la tabla */
+    max-width: 1200px; 
     margin: 30px auto; 
     padding: 0 20px; 
     animation: fadeIn 0.4s ease-out forwards;

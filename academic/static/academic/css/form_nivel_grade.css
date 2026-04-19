@@ -60,7 +60,6 @@
     padding: 50px;
 }
 
-/* Inputs y Selects "Grandes" */
 .form-group {
     margin-bottom: 25px;
 }
@@ -92,7 +91,6 @@
     box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
 }
 
-/* Botón de Guardado */
 .btn-save-academic {
     width: 100%;
     padding: 18px;
@@ -144,7 +142,7 @@
     box-shadow: none !important;
     opacity: 0.7 !important; 
 }
-/* Contenedor de mensajes para que no se pegue al header */
+
 .messages-container {
     max-width: 700px;
     margin: 20px auto;

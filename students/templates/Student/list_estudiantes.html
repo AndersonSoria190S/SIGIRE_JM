@@ -4,7 +4,7 @@
 {% block page_title %}Gestión de Estudiantes{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'students/css/list_estudiantes.css' %}?v=1" />
+<link rel="stylesheet" href="{% static 'students/css/list_estudiantes.css' %}?v=6" />
 
 <div class="list-container-wrapper">
     <div class="student-list-card">
@@ -12,11 +12,48 @@
         <div class="list-header">
             <div class="header-info">
                 <h3><i class="fa-solid fa-children"></i> Directorio de Estudiantes</h3>
-                <p>Lista general de alumnos matriculados en la institución.</p>
+                <span class="module-badge">Módulo Académico</span>
             </div>
-            <a href="{% url 'crear_estudiante' %}" class="btn-add-student">
-                <i class="fa-solid fa-user-plus"></i> Nuevo Estudiante
-            </a>
+            
+            <div class="header-actions">
+                {% if not ver_inactivos %}
+                    <a href="{% url 'crear_estudiante' %}" class="btn-add-student">
+                        <i class="fa-solid fa-user-plus"></i> Nuevo Estudiante
+                    </a>
+                {% endif %}
+
+            <div class="toggle-container">
+                <span class="toggle-label">Ver Inactivos</span>
+                <label class="switch">
+                    <input type="checkbox" id="toggleInactivos" {% if ver_inactivos %}checked{% endif %}>
+                    <span class="slider round"></span>
+            </label>
+    </div>
+</div>
+        </div>
+
+        <div class="filter-bar">
+            <form method="GET" id="searchForm" class="combined-search-form">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" name="search" id="searchInput" 
+                           placeholder="Buscar por CI, nombres o apellidos..." 
+                           value="{{ search_query|default:'' }}">
+                    {% if search_query %}
+                        <a href="{% url 'list_estudiantes' %}" class="clear-search"><i class="fa-solid fa-xmark"></i></a>
+                    {% endif %}
+                </div>
+
+                <div class="select-box">
+                    <select name="genero" id="generoFilter">
+                        <option value="">Todos los géneros</option>
+                        <option value="M" {% if genero_filter == 'M' %}selected{% endif %}>Masculino</option>
+                        <option value="F" {% if genero_filter == 'F' %}selected{% endif %}>Femenino</option>
+                    </select>
+                </div>
+                
+                <input type="hidden" name="inactivos" id="hiddenInactivos" value="{% if ver_inactivos %}on{% endif %}">
+            </form>
         </div>
 
         <div class="list-body">
@@ -41,7 +78,7 @@
                         <td>
                             <div class="student-info">
                                 <span class="student-name">
-                                    {{ estudiante.apellido_paterno|upper }} {{ estudiante.apellido_materno|upper }}, {{ estudiante.nombres }}
+                                    {{ estudiante.apellido_paterno }} {{ estudiante.apellido_materno }}, {{ estudiante.nombres }}
                                 </span>
                             </div>
                         </td>
@@ -71,38 +108,56 @@
                                     <i class="fa-solid fa-envelope"></i> Email
                                 </a>
                             {% else %}
-                                <span class="no-data">Sin correo</span>
+                                <span class="no-data" style="color: #94a3b8; font-size: 0.85rem;">Sin correo</span>
                             {% endif %}
                         </td>
 
                         <td style="text-align: center;">
                             {% if estudiante.estado %}
-                                <span class="status-badge active"><i class="fa-solid fa-check"></i> Activo</span>
+                                <span class="badge status-active"><i class="fa-solid fa-check"></i> Activo</span>
                             {% else %}
-                                <span class="status-badge inactive"><i class="fa-solid fa-xmark"></i> Inactivo</span>
+                                <span class="badge status-inactive"><i class="fa-solid fa-xmark"></i> Inactivo</span>
                             {% endif %}
                         </td>
 
                         <td class="actions-cell">
-                            
-                            <a href="#" class="btn-action edit" title="Editar Estudiante">
-                                <i class="fa-solid fa-pen-to-square"></i>
-                            </a>
+    <a href="{% url 'editar_estudiante' estudiante.pk %}" class="btn-action edit" title="Editar Estudiante">
+        <i class="fa-solid fa-pen-to-square"></i>
+    </a>
 
-                            <a href="#" 
-                               class="btn-action delete" title="Eliminar Estudiante"
-                               onclick="return confirm('¿Seguro que deseas eliminar este registro?');">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
+    {% if estudiante.estado %}
+        <a href="{% url 'desactivar_estudiante' estudiante.pk %}" 
+           class="btn-action delete sweet-deactivate" 
+           data-nombre="{{ estudiante.nombres }} {{ estudiante.apellido_paterno }}"
+           title="Desactivar Estudiante">
+            <i class="fa-solid fa-user-slash"></i>
+        </a>
+    {% else %}
+        <a href="{% url 'reactivar_estudiante' estudiante.pk %}" class="btn-action reactivate" title="Reactivar">
+            <i class="fa-solid fa-user-check"></i>
+        </a>
 
-                        </td>
+        {% with relacion=estudiante.parentesco_set.first %}
+            {% with total_hermanos=relacion.tutor.parentesco_set.count %}
+            <a href="{% url 'eliminar_estudiante_fisico' estudiante.pk %}" 
+               class="btn-action delete-db sweet-delete-db" 
+               data-nombre="{{ estudiante.nombres }}"
+               data-inscrito="{% if estudiante.inscripcion_set.exists %}true{% else %}false{% endif %}"
+               data-hermanos="{% if total_hermanos > 1 %}true{% else %}false{% endif %}"
+               title="Eliminar Permanente">
+                <i class="fa-solid fa-trash-can"></i>
+            </a>
+            {% endwith %}
+        {% endwith %}
+    {% endif %}
+</td>
                     </tr>
 
                     {% empty %}
                     <tr>
-                        <td colspan="7" class="empty-state">
-                            <i class="fa-solid fa-folder-open empty-icon"></i>
-                            <p>No hay estudiantes registrados actualmente</p>
+                        <td colspan="7" class="empty-state" style="text-align: center; padding: 50px; color: #94a3b8;">
+                            <i class="fa-solid fa-user-graduate fa-3x" style="margin-bottom: 15px; opacity: 0.5;"></i>
+                            <p>No se encontraron estudiantes con esos criterios.</p>
                         </td>
                     </tr>
                     {% endfor %}
@@ -112,4 +167,7 @@
         </div>
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{% static 'students/js/list_estudiantes.js' %}?v=4"></script>
 {% endblock %}

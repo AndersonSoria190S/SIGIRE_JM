@@ -1,4 +1,4 @@
-table-container {
+.table-container {
     background: #ffffff;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
@@ -61,7 +61,6 @@ table-container {
     font-size: 0.9rem;
 }
 
-
 .badge {
     padding: 5px 10px;
     border-radius: 12px;
@@ -70,19 +69,19 @@ table-container {
     display: inline-block;
 }
 
+/* Badges con tonos que combinan con el rojo */
 .badge.director { 
-    background-color: #dbeafe; 
-    color: #1e40af; 
+    background-color: #fee2e2; 
+    color: #c62828; 
 }
 
 .badge.secretaria { 
-    background-color: #fce7f3; 
-    color: #9d174d; 
+    background-color: #fef3c7; 
+    color: #92400e; 
 }
 
 .status-active { color: #16a34a; font-weight: bold; }
 .status-inactive { color: #dc2626; font-weight: bold; }
-
 
 .toggle-container {
     display: flex;
@@ -107,64 +106,68 @@ table-container {
 .switch {
     position: relative;
     display: inline-block;
-    width: 50px;  
-    height: 26px;
+    width: 52px;
+    height: 28px;
 }
 
-.switch input { 
+.switch input {
     opacity: 0;
     width: 0;
     height: 0;
 }
 
+
+/* Fondo */
 .slider {
     position: absolute;
     cursor: pointer;
-    top: 0; left: 0; right: 0; bottom: 0;
-    background-color: #cbd5e1;
-    transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1); 
-    border-radius: 34px;
-    box-shadow: inset 0 1px 3px rgba(0,0,0,0.15); 
+    inset: 0;
+    background: linear-gradient(145deg, #cbd5e1, #e2e8f0);
+    transition: all 0.35s ease;
+    border-radius: 999px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.15);
 }
 
+/* Bolita */
 .slider:before {
-    position: absolute;
     content: "";
-    height: 20px;
-    width: 20px;
+    position: absolute;
+    height: 22px;
+    width: 22px;
     left: 3px;
     bottom: 3px;
-    background-color: white;
-    transition: .4s cubic-bezier(0.4, 0.0, 0.2, 1);
+    background: white;
     border-radius: 50%;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2); 
+    transition: all 0.35s ease;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
 }
 
 
+/* Toggle activo en Rojo Institucional */
+/* ACTIVO */
 input:checked + .slider {
-    background-color: #3b82f6; 
+    background: linear-gradient(135deg, #c62828, #ef4444);
+    box-shadow: 0 0 10px rgba(198, 40, 40, 0.4);
 }
-
 
 input:checked + .slider:before {
     transform: translateX(24px);
 }
 
+/* CLICK feedback */
 .switch input:active + .slider:before {
-    width: 28px; 
+    width: 28px;
 }
 
 .switch input:checked:active + .slider:before {
     transform: translateX(16px); 
 }
 
-
 .action-buttons {
     display: flex;
     justify-content: center;
     gap: 12px;
 }
-
 
 .btn-edit {
     color: #0284c7;         
@@ -230,7 +233,6 @@ input:checked + .slider:before {
     box-shadow: none;
 }
 
-
 .btn-reactivate {
     color: #10b981;
     background: #ecfdf5;
@@ -259,7 +261,6 @@ input:checked + .slider:before {
     transform: translateY(0);
     box-shadow: none;
 }
-
 
 .btn-delete-db {
     color: #ef4444;
@@ -290,14 +291,16 @@ input:checked + .slider:before {
     box-shadow: none;
 }
 
-
+/* =========================================
+   BUSCADOR AVANZADO
+   ========================================= */
 .search-container {
     background: #ffffff;
     padding: 20px;
     border-radius: 12px;
     margin-bottom: 25px;
     border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 10px 15px -3px rgba(0,0,0,0.03); /* Sombra 3D suave */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 10px 15px -3px rgba(0,0,0,0.03); 
 }
 
 .search-form {
@@ -328,7 +331,6 @@ input:checked + .slider:before {
     color: #475569;
 }
 
-
 .input-with-icon {
     position: relative;
 }
@@ -341,173 +343,73 @@ input:checked + .slider:before {
     color: #94a3b8;
 }
 
-
 .search-input, .search-select {
-    width: 100%;
-    padding: 12px 14px;
+     width: 100%;
+    padding: 12px 40px 12px 14px;
     border: 1px solid #cbd5e1;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 0.95rem;
+    font-weight: 600;
     color: #334155;
     background-color: #f8fafc;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
+
+    /* Flecha custom */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2364748b'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    background-size: 16px;
+
+    appearance: none;
+    cursor: pointer;
+    transition: all 0.25s ease;
 }
 
 .search-input {
     padding-left: 40px; 
 }
 
-
+/* Focus Ring en Rojo Institucional */
 .search-input:focus, .search-select:focus {
     background-color: #ffffff;
-    border-color: #3b82f6;
+    border-color: #c62828;
     outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    box-shadow: 0 0 0 3px rgba(198, 40, 40, 0.15);
 }
-
 
 .search-actions {
     display: flex;
     gap: 10px;
 }
 
+/* Botón de búsqueda en Rojo Institucional */
 .btn-search {
-    background: #3b82f6;
+    background: linear-gradient(135deg, #c62828, #ef4444);
     color: white;
     border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.btn-search:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-}
-
-.btn-clear {
-    background: #f1f5f9;
-    color: #64748b;
-    text-decoration: none;
-    padding: 12px 16px;
-    border-radius: 8px;
-    font-weight: 600;
-    transition: all 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid #e2e8f0;
-}
-/* =========================================
-   BUSCADOR AVANZADO
-   ========================================= */
-.search-container {
-    background: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    border: 1px solid #e2e8f0;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.02), 0 10px 15px -3px rgba(0,0,0,0.03); /* Sombra 3D suave */
-}
-
-.search-form {
-    display: flex;
-    gap: 15px;
-    align-items: flex-end;
-    flex-wrap: wrap; /* Para que se adapte en celulares */
-}
-
-.search-group {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.search-group.text-search {
-    flex: 1;
-    min-width: 250px;
-}
-
-.search-group.select-search {
-    width: 220px;
-}
-
-.search-label {
-    font-size: 0.85rem;
+    padding: 12px 26px;
+    border-radius: 10px;
     font-weight: 700;
-    color: #475569;
-}
-
-/* Contenedor relativo para poner la lupa dentro del input */
-.input-with-icon {
-    position: relative;
-}
-
-.input-with-icon i {
-    position: absolute;
-    left: 14px;
-    top: 50%;
-    transform: translateY(-50%);
-    color: #94a3b8;
-}
-
-/* Estilos compartidos para input y select */
-.search-input, .search-select {
-    width: 100%;
-    padding: 12px 14px;
-    border: 1px solid #cbd5e1;
-    border-radius: 8px;
-    font-size: 0.95rem;
-    color: #334155;
-    background-color: #f8fafc;
-    transition: all 0.3s ease;
-    box-sizing: border-box;
-}
-
-/* Espacio extra a la izquierda solo para el input con la lupa */
-.search-input {
-    padding-left: 40px; 
-}
-
-/* Efecto al hacer clic (Focus Ring) */
-.search-input:focus, .search-select:focus {
-    background-color: #ffffff;
-    border-color: #3b82f6;
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-/* Botones del buscador */
-.search-actions {
-    display: flex;
-    gap: 10px;
-}
-
-.btn-search {
-    background: #3b82f6;
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-weight: 600;
     cursor: pointer;
-    transition: all 0.3s ease;
     display: flex;
     align-items: center;
     gap: 8px;
+    letter-spacing: 0.3px;
+
+    /* Sombra más profesional */
+    box-shadow: 0 3px 6px rgba(198, 40, 40, 0.25);
+    transition: all 0.25s ease;
 }
 
+/* Hover controlado */
 .btn-search:hover {
-    background: #2563eb;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 12px rgba(198, 40, 40, 0.3);
+}
+
+/* Click realista */
+.btn-search:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(198, 40, 40, 0.2);
 }
 
 .btn-clear {
@@ -524,13 +426,6 @@ input:checked + .slider:before {
     border: 1px solid #e2e8f0;
 }
 
-
-.btn-clear:hover {
-    background: #fee2e2;
-    color: #ef4444;
-    border-color: #fca5a5;
-    transform: translateY(-2px);
-}
 .btn-clear:hover {
     background: #fee2e2;
     color: #ef4444;

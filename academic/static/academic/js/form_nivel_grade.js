@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     
-    // 1. Estética de inputs
     const inputs = document.querySelectorAll('input, select');
     inputs.forEach(el => el.classList.add('form-control-academic'));
 
@@ -10,7 +9,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const btnSubmit = form.querySelector('button[type="submit"]');
         if (!btnSubmit) return;
 
-        // --- LÓGICA DE BOTÓN INTELIGENTE (Desactivado si no hay cambios) ---
         const getSnapshot = () => {
             const data = new FormData(form);
             const obj = {};
@@ -45,10 +43,7 @@ document.addEventListener('DOMContentLoaded', function() {
         form.addEventListener('change', verificarCambios);
         verificarCambios(); 
 
-        // --- LÓGICA DE ENVÍO (Interceptamos solo para confirmar) ---
         form.addEventListener('submit', function(e) {
-            // Nota: Si el código llega hasta aquí, significa que el navegador 
-            // YA validó que no haya campos vacíos (gracias a quitar novalidate).
             
             e.preventDefault(); 
             const isEdit = btnSubmit.classList.contains('btn-edit');

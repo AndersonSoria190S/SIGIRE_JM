@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <link rel="stylesheet" href="{% static 'students/css/list_tutores.css' %}?v=3" />
+  <link rel="stylesheet" href="{% static 'students/css/list_tutores.css' %}?v=4" />
 
   <div class="list-container-wrapper">
     <div class="tutor-list-card">
@@ -52,20 +52,20 @@
       <div class="list-body">
         <table class="tutor-table">
           <thead>
-            <tr>
-              <th style="width: 50px;">#</th>
-              <th>Nombre Completo</th>
-              <th>Cédula de Identidad</th>
-              <th>Contacto</th>
-              <th>Ocupación</th>
+  <tr>
+    <th style="width: 50px;">#</th>
+    <th>Nombre Completo</th>
+    <th>Cédula de Identidad</th>
+    <th>Contacto</th>
+    <th>Ocupación</th>
 
-              {% if request.GET.modo_seleccion %}
-                <th style="text-align: center; background-color: #fef3c7;">Seleccionar</th>
-              {% endif %}
-
-              <th style="text-align: center;">Acciones</th>
-            </tr>
-          </thead>
+    {% if request.GET.modo_seleccion %}
+      <th style="text-align: center; background-color: #fef3c7;">Seleccionar</th>
+    {% else %}
+      <th style="text-align: center;">Acciones</th>
+    {% endif %}
+  </tr>
+</thead>
           <tbody>
             {% for tutor in tutores %}
               <tr>
@@ -94,35 +94,33 @@
                   <td style="text-align: center; background-color: #fffbeb;">
                     <a href="{% url 'crear_estudiante' %}?tutor_id={{ tutor.pk }}" class="btn-action select" style="background: #f59e0b; color: white; width: auto; padding: 6px 12px; font-size: 0.75rem; font-weight: 700; border-radius: 6px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px;"><i class="fa-solid fa-check-to-slot"></i> SELECCIONAR</a>
                   </td>
-                {% endif %}
-
-                <td class="actions-cell">
-                    <a href="{% url 'editar_tutor' tutor.pk %}" class="btn-action edit" title="Editar Tutor">
-                      <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
-
-                    {% if not tutor.tiene_estudiantes %}
-                      <a href="{% url 'eliminar_tutor' tutor.pk %}" class="btn-action delete" onclick="return confirm('¿Seguro que deseas eliminar este tutor?');" title="Eliminar Tutor">
-                        <i class="fa-solid fa-trash-can"></i>
+                {% else %}
+                  <td class="actions-cell">
+                      <a href="{% url 'editar_tutor' tutor.pk %}" class="btn-action edit" title="Editar Tutor">
+                        <i class="fa-solid fa-pen-to-square"></i>
                       </a>
-                    {% else %}
-                      <span class="btn-action" style="background: #f1f5f9; color: #94a3b8; cursor: not-allowed;" title="Protegido: Tiene estudiantes asignados">
-                        <i class="fa-solid fa-lock"></i>
-                      </span>
-                    {% endif %}
-                </td>
+
+                      {% if not tutor.tiene_estudiantes %}
+                        <a href="{% url 'eliminar_tutor' tutor.pk %}" class="btn-action delete" onclick="return confirm('¿Seguro que deseas eliminar este tutor?');" title="Eliminar Tutor">
+                          <i class="fa-solid fa-trash-can"></i>
+                        </a>
+                      {% else %}
+                        <span class="btn-action" style="background: #f1f5f9; color: #94a3b8; cursor: not-allowed;" title="Protegido: Tiene estudiantes asignados">
+                          <i class="fa-solid fa-lock"></i>
+                        </span>
+                      {% endif %}
+                  </td>
+                {% endif %}
             </tr>
           {% empty %}
             <tr>
-              <td colspan="{% if request.GET.modo_seleccion %}
-                  7
-                {% else %}
-                  6
-                {% endif %}"
-                style="text-align:center;">No hay tutores registrados</td>
+              <td colspan="6" style="text-align:center; padding: 30px;">
+                <i class="fa-solid fa-folder-open" style="color: #cbd5e1; font-size: 2rem; margin-bottom: 10px;"></i>
+                <br>
+                No hay tutores registrados
+              </td>
             </tr>
-            {% endfor %}
-          </tbody>
+          {% endfor %} </tbody>
         </table>
       </div>
     </div>

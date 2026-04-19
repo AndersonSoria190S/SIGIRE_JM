@@ -1,7 +1,6 @@
-/* --- Variables base (Actualizadas al Rojo Institucional) --- */
 :root {
-    --primary-color: #c62828;       /* Rojo Colegio */
-    --primary-hover: #b71c1c;       /* Rojo Oscuro */
+    --primary-color: #c62828;    
+    --primary-hover: #b71c1c;    
     --bg-light: #f8fafc;
     --border-color: #e2e8f0;
     --text-main: #1e293b;
@@ -9,7 +8,6 @@
     --danger-color: #ef4444;
 }
 
-/* --- Contenedor Principal --- */
 .form-container-wrapper { 
     max-width: 850px; 
     margin: 40px auto; 
@@ -22,7 +20,6 @@
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* --- Tarjeta del Formulario --- */
 .tutor-form-card { 
     background: #ffffff; 
     border-radius: 16px; 
@@ -31,15 +28,14 @@
     overflow: hidden; 
 }
 
-/* --- Encabezado (Ajustado al Pizarra + Rojo) --- */
 .tutor-form-header { 
-    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* Pizarra Sidebar */
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); 
     padding: 24px 32px; 
     display: flex; 
     justify-content: space-between; 
     align-items: center; 
     color: white;
-    border-bottom: 4px solid var(--primary-color); /* Línea roja de acento */
+    border-bottom: 4px solid var(--primary-color); 
 }
 
 .tutor-form-header h3 { 
@@ -53,7 +49,7 @@
 }
 
 .tutor-form-header h3 i {
-    color: #fca5a5; /* Un rojo/rosado muy claro para resaltar el ícono sobre oscuro */
+    color: #fca5a5; 
 }
 
 .module-badge { 
@@ -66,7 +62,6 @@
     text-transform: uppercase;
 }
 
-/* --- Cuerpo del Formulario --- */
 .tutor-form-body { 
     padding: 40px 45px; 
 }
@@ -85,7 +80,6 @@
     gap: 16px; 
 }
 
-/* --- Etiquetas (Labels) --- */
 .form-group label { 
     font-weight: 700; 
     color: var(--text-main); 
@@ -109,7 +103,6 @@
     font-weight: 500;
 }
 
-/* --- Inputs y Selects --- */
 .tutor-input { 
     width: 100%; 
     padding: 14px 18px; 
@@ -131,11 +124,10 @@
 .tutor-input:focus { 
     border-color: var(--primary-color); 
     background-color: #ffffff; 
-    box-shadow: 0 0 0 5px rgba(198, 40, 40, 0.1); /* Brillo rojo suave */
+    box-shadow: 0 0 0 5px rgba(198, 40, 40, 0.1);
     outline: none; 
 }
 
-/* --- Errores Globales --- */
 .error-message {
     background-color: #fef2f2;
     border-left: 5px solid var(--danger-color);
@@ -150,7 +142,6 @@
     gap: 10px;
 }
 
-/* --- Botones --- */
 .form-footer-actions { 
     margin-top: 40px; 
     padding-top: 30px; 
@@ -206,16 +197,15 @@
     border-color: #cbd5e1;
 }
 
-/* --- Estados de Bloqueo (Consistentes) --- */
 .locked-badge {
-    color: var(--primary-color); /* Cambiado a rojo para combinar */
+    color: var(--primary-color); 
     font-size: 0.75rem;
     margin-left: 10px;
     font-weight: 700;
 }
 
 .input-disabled {
-    background-color: #f1f5f9 !important; /* Un poco más claro para mejor contraste */
+    background-color: #f1f5f9 !important;
     color: #94a3b8 !important;
     cursor: not-allowed !important;
     border-color: #cbd5e1 !important;

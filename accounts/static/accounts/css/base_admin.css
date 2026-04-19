@@ -20,7 +20,6 @@ body {
     color: var(--text-main);
 }
 
-/* Menú Lateral (Sidebar) Pizarra Oscuro */
 .sidebar {
     width: 260px;
     background-color: var(--secondary-color);
@@ -48,7 +47,6 @@ body {
     align-items: center;
     padding: 15px 25px;
     color: #cbd5e1;
-    /* Gris claro para los enlaces inactivos */
     text-decoration: none;
     transition: all 0.3s;
     gap: 15px;
@@ -61,14 +59,12 @@ body {
     border-left: 4px solid var(--white);
 }
 
-/* Contenido Principal */
 .main-wrapper {
     flex: 1;
     display: flex;
     flex-direction: column;
 }
 
-/* Barra Superior (Topbar) Blanca */
 .topbar {
     height: 70px;
     background-color: var(--white);

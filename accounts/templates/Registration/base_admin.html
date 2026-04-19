@@ -94,18 +94,15 @@
     document.addEventListener("DOMContentLoaded", function() {
       {% for message in messages %}
         Swal.fire({
-          // Definimos el icono según el tag de Django
           icon: '{% if message.tags == "error" %}error{% elif message.tags == "warning" %}warning{% elif message.tags == "success" %}success{% else %}info{% endif %}',
           
-          // Título corto y directo
           title: '{% if message.tags == "success" %}¡Logrado!{% elif message.tags == "error" %}¡Atención!{% else %}Información{% endif %}',
           
-          // El mensaje largo va aquí (el campo 'text' permite múltiples líneas y no se sale)
           text: '{{ message|escapejs }}',
           
           confirmButtonText: 'Entendido',
-          confirmButtonColor: '#3b82f6', // Color azul acorde a tu diseño
-          timer: 5000, // Se cierra solo después de 5 segundos si no presionan el botón
+          confirmButtonColor: '#3b82f6', 
+          timer: 5000, 
           timerProgressBar: true
         });
       {% endfor %}

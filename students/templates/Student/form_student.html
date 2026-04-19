@@ -1,28 +1,33 @@
 {% extends 'Registration/base_admin.html' %}
 {% load static %}
 
-{% block page_title %}Registro de Estudiante{% endblock %}
+{% block page_title %}{% if es_edicion %}Editar Estudiante{% else %}Registro de Estudiante{% endif %}{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'students/css/form_student.css' %}?v=1" />
+<link rel="stylesheet" href="{% static 'students/css/form_student.css' %}?v=5" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+<link rel="stylesheet" type="text/css" href="https://npmcdn.com/flatpickr/dist/themes/airbnb.css">
 
 <div class="form-container-wrapper">
     <div class="student-form-card">
-        
         <div class="student-form-header">
-            <h3><i class="fa-solid fa-child-reaching"></i> Registro de Estudiante</h3>
+            <h3>
+                <i class="fa-solid {% if es_edicion %}fa-user-pen{% else %}fa-child-reaching{% endif %}"></i> 
+                {% if es_edicion %}Editar Estudiante{% else %}Registro de Nuevo Estudiante{% endif %}
+            </h3>
             <span class="module-badge">Módulo Registro</span>
         </div>
 
         <div class="student-form-body">
-
-            {% if form.non_field_errors %}
-                <div style="color: red; margin-bottom: 15px; padding: 10px; background-color: #fef2f2; border-left: 4px solid #dc2626; border-radius: 4px;">
-                    {{ form.non_field_errors }}
+            {% if es_edicion %}
+                <div class="tutor-linked-banner" style="background-color: #f8fafc; border-color: #e2e8f0; color: #64748b; border-left: 4px solid #64748b;">
+                    <div class="banner-icon"><i class="fa-solid fa-shield-halved"></i></div>
+                    <div class="banner-content">
+                        <strong>Identidad Protegida:</strong> {{ estudiante.cedula_identidad }}
+                        <br><small>Por integridad académica, el CI no puede ser modificado en edición.</small>
+                    </div>
                 </div>
-            {% endif %}
-
-            {% if tutor_seleccionado %}
+            {% elif tutor_seleccionado %}
                 <div class="tutor-linked-banner">
                     <div class="banner-icon"><i class="fa-solid fa-link"></i></div>
                     <div class="banner-content">
@@ -32,79 +37,60 @@
                 </div>
             {% endif %}
 
-            <form action="{% url 'crear_estudiante' %}" method="POST">
+            <form action="{% if es_edicion %}{% url 'editar_estudiante' estudiante.pk %}{% else %}{% url 'crear_estudiante' %}{% endif %}" method="POST">
                 {% csrf_token %}
                 
-                {% if tutor_seleccionado %}
-                    <input type="hidden" name="tutor_id" value="{{ tutor_seleccionado.pk }}">
-                {% endif %}
-                
                 <div class="student-grid">
-                    
                     <div class="form-group full-width">
                         <label><i class="fa-solid fa-user"></i> Nombres</label>
-                        <input type="text" name="nombres"
-                               value="{{ form.nombres.value|default:'' }}"
-                               class="student-input" placeholder="Ej: Maria Fernanda">
-                        <small style="color: red;">{{ form.nombres.errors }}</small>
+                        <input type="text" name="nombres" value="{{ form.nombres.value|default:'' }}" class="student-input" required>
                     </div>
 
                     <div class="form-group">
                         <label><i class="fa-solid fa-user-tag"></i> Apellido Paterno</label>
-                        <input type="text" name="apellido_paterno"
-                               value="{{ form.apellido_paterno.value|default:'' }}"
-                               class="student-input" placeholder="Ej: Gómez">
+                        <input type="text" name="apellido_paterno" value="{{ form.apellido_paterno.value|default:'' }}" class="student-input" required>
                     </div>
 
                     <div class="form-group">
                         <label><i class="fa-solid fa-user-tag"></i> Apellido Materno</label>
-                        <input type="text" name="apellido_materno"
-                               value="{{ form.apellido_materno.value|default:'' }}"
-                               class="student-input" placeholder="Ej: Silva">
+                        <input type="text" name="apellido_materno" value="{{ form.apellido_materno.value|default:'' }}" class="student-input">
                     </div>
 
                     <div class="form-group full-width">
-                        <label><i class="fa-solid fa-address-card"></i> Cédula de Identidad del Estudiante</label>
+                        <label><i class="fa-solid fa-address-card"></i> Cédula de Identidad</label>
                         <div class="ci-grid">
                             <div>
-                                <input type="text" name="ci_nro"
-                                       value="{{ form.ci_nro.value|default:'' }}"
-                                       class="student-input"
-                                       placeholder="Número (Ej: 1234567)">
-                                <small class="input-hint">Número de CI</small>
+                                <input type="text" name="ci_nro" value="{% if es_edicion %}{{ ci_nro_val }}{% else %}{{ form.ci_nro.value|default:'' }}{% endif %}" 
+                                       class="student-input" {% if es_edicion %}disabled style="background-color: #f1f5f9;"{% endif %}>
+                                <small class="input-hint">Número</small>
                             </div>
                             <div>
-                                <input type="text" name="ci_comp"
-                                       value="{{ form.ci_comp.value|default:'' }}"
-                                       class="student-input"
-                                       placeholder="Comp. (Opcional)">
-                                <small class="input-hint">Ej: 1A</small>
+                                <input type="text" name="ci_comp" value="{% if es_edicion %}{{ ci_comp_val }}{% else %}{{ form.ci_comp.value|default:'' }}{% endif %}" 
+                                       class="student-input" {% if es_edicion %}disabled style="background-color: #f1f5f9;"{% endif %}>
+                                <small class="input-hint">Comp.</small>
                             </div>
                             <div>
-                                <select name="ci_exp" class="student-input">
-                                    {% for value, label in form.ci_exp.field.choices %}
-                                        <option value="{{ value }}"
-                                            {% if form.ci_exp.value == value %}selected{% endif %}>
-                                            {{ label }}
-                                        </option>
-                                    {% endfor %}
-                                </select>
-                                <small class="input-hint">Expedido</small>
-                            </div>
+    <select name="ci_exp" class="student-input" {% if es_edicion %}disabled style="background-color: #f1f5f9;"{% endif %}>
+        <option value="">Expedido</option>
+        {% for val, label in departamentos %}
+            <option value="{{ val }}" {% if ci_exp_val == val %}selected{% endif %}>
+                {{ label }}
+            </option>
+        {% endfor %}
+    </select>
+    <small class="input-hint">Departamento</small>
+</div>
                         </div>
                     </div>
 
                     <div class="form-group">
                         <label><i class="fa-solid fa-calendar-days"></i> Fecha de Nacimiento</label>
-                        <input type="date" name="fecha_nacimiento"
-                               value="{{ form.fecha_nacimiento.value|default:'' }}"
-                               class="student-input">
+                        <input type="date" name="fecha_nacimiento" value="{{ form.fecha_nacimiento.value|date:'Y-m-d'|default:'' }}" class="student-input" required>
                     </div>
 
                     <div class="form-group">
                         <label><i class="fa-solid fa-venus-mars"></i> Género</label>
-                        <select name="genero" class="student-input">
-                            <option value="">Seleccione...</option>
+                        <select name="genero" class="student-input" required>
                             {% for value, label in form.genero.field.choices %}
                                 <option value="{{ value }}" {% if form.genero.value == value %}selected{% endif %}>{{ label }}</option>
                             {% endfor %}
@@ -112,61 +98,19 @@
                     </div>
 
                     <div class="form-group full-width">
-                        <label><i class="fa-solid fa-map-location-dot"></i> Dirección de Domicilio</label>
-                        <div class="direccion-grid" style="display: grid; grid-template-columns: 1.5fr 2fr 1fr; gap: 15px;">
-                            
-                            <div>
-                                <input type="text" name="zona"
-                                       class="student-input"
-                                       placeholder="Ej: Zona Sur, Barrio Lindo...">
-                                <small class="input-hint">Zona o Barrio</small>
-                            </div>
-
-                            <div>
-                                <input type="text" name="avenida"
-                                       class="student-input"
-                                       placeholder="Ej: Av. Las Américas, C. Sucre...">
-                                <small class="input-hint">Avenida o Calle</small>
-                            </div>
-
-                            <div>
-                                <input type="text" name="num_puerta"
-                                       class="student-input"
-                                       placeholder="Ej: #123 o S/N">
-                                <small class="input-hint">Número de puerta</small>
-                            </div>
-
-                        </div>
+                        <label><i class="fa-solid fa-map-location-dot"></i> Dirección</label>
+                        <input type="text" name="direccion" value="{{ form.direccion.value|default:'' }}" class="student-input" required>
                     </div>
 
-                    <div class="form-group">
-                        <label><i class="fa-solid fa-envelope"></i> Correo Electrónico (Opcional)</label>
-                        <input type="email" name="correo_electronico"
-                               value="{{ form.correo_electronico.value|default:'' }}"
-                               class="student-input" placeholder="Ej: correo@ejemplo.com">
+                    <div class="form-group full-width">
+                        <label><i class="fa-solid fa-envelope"></i> Correo (Opcional)</label>
+                        <input type="email" name="correo_electronico" value="{{ form.correo_electronico.value|default:'' }}" class="student-input">
                     </div>
-
-                    {% if tutor_seleccionado %}
-                    <div class="form-group">
-                        <label><i class="fa-solid fa-people-arrows"></i> Relación con el Tutor</label>
-                        <select name="relacion" class="student-input" required>
-                            <option value="">Seleccione parentesco...</option>
-                            <option value="Padre">Padre</option>
-                            <option value="Madre">Madre</option>
-                            <option value="Abuelo/a">Abuelo/a</option>
-                            <option value="Tío/a">Tío/a</option>
-                            <option value="Hermano/a">Hermano/a</option>
-                            <option value="Apoderado">Otro Apoderado</option>
-                        </select>
-                        <small class="input-hint">¿Qué parentesco tiene {{ tutor_seleccionado.nombres }} con el estudiante?</small>
-                    </div>
-                    {% endif %}
-
                 </div>
 
                 <div class="form-footer-actions">
                     <button type="submit" class="btn-save-student">
-                        <i class="fa-solid fa-floppy-disk"></i> Guardar Estudiante
+                        <i class="fa-solid fa-floppy-disk"></i> {% if es_edicion %}Guardar Cambios{% else %}Registrar Estudiante{% endif %}
                     </button>
                     <a href="{% url 'list_estudiantes' %}" class="btn-cancel-student">Cancelar</a> 
                 </div>
@@ -176,15 +120,15 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
 <script>
     const configEstudiante = {
-
-        mostrarPregunta: {{ mostrar_pregunta|yesno:"true,false" }}, 
+        mostrarPregunta: {{ mostrar_pregunta|default:False|yesno:"true,false" }}, 
         urlListaTutores: "{% url 'list_tutores' %}?modo_seleccion=true",
-        urlRegistrarTutor: "{% url 'registrar_tutor' %}"
+        urlRegistrarTutor: "{% url 'registrar_tutor' %}",
+        esEdicion: {{ es_edicion|default:False|yesno:"true,false" }} // <--- ESTO ACTIVA EL JS
     };
 </script>
-
-<script src="{% static 'students/js/form_student.js' %}"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+<script src="https://npmcdn.com/flatpickr/dist/l10n/es.js"></script>
+<script src="{% static 'students/js/form_student.js' %}?v=8"></script>
 {% endblock %}
