@@ -105,7 +105,7 @@ input:focus, select:focus {
 
 .btn-save {
     background: var(--primary-color, #3b82f6);
-    color: white !important; /* Obligamos a que la letra sea blanca */
+    color: white !important;
     border: none;
     padding: 16px;
     border-radius: 10px;
@@ -125,9 +125,8 @@ input:focus, select:focus {
     box-shadow: 0 8px 15px rgba(59, 130, 246, 0.3);
 }
 
-/* 💥 LA SOLUCIÓN AL BOTÓN BLANCO: EL ESTADO DE CARGA 💥 */
 .btn-save:disabled, .btn-save.loading {
-    background: #94a3b8 !important; /* Se pone gris elegante */
+    background: #94a3b8 !important;
     color: white !important;
     cursor: not-allowed;
     transform: none !important;

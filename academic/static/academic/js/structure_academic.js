@@ -1,99 +1,133 @@
-// Funciones del Modal
-function abrirModal() {
-  document.getElementById('modalParalelo').style.display = 'flex';
-  document.getElementById('filtro_nivel').selectedIndex = 0;
-  filtrarGrados();
-}
-
-function cerrarModal() {
-  document.getElementById('modalParalelo').style.display = 'none';
-}
-
-window.onclick = function (event) {
-  var modal = document.getElementById('modalParalelo');
-  if (event.target == modal) {
-    cerrarModal();
-  }
-}
-
-function filtrarGrados() {
-  let nivelSelect = document.getElementById('filtro_nivel');
-  let gradoSelect = document.getElementById('select_grado');
-  if(!nivelSelect || !gradoSelect) return; // Protección extra
-
-  let nivelNombre = nivelSelect.options[nivelSelect.selectedIndex].text;
-
-  for (let i = 0; i < gradoSelect.options.length; i++) {
-    let option = gradoSelect.options[i];
-    if (!option.hasAttribute('data-original-text')) {
-      option.setAttribute('data-original-text', option.text);
-    }
-    let textoOriginal = option.getAttribute('data-original-text');
-
-    if (option.value === '') {
-      option.style.display = 'block';
-      continue;
-    }
-
-    if (nivelNombre === '-- Elige Nivel --') {
-      option.style.display = 'none';
-    } else if (textoOriginal.includes(nivelNombre)) {
-      option.style.display = 'block';
-      option.text = textoOriginal.split('-')[0].trim();
-    } else {
-      option.style.display = 'none';
-    }
-  }
-  gradoSelect.value = '';
-}
-
-// Inicialización cuando carga la página
 document.addEventListener('DOMContentLoaded', function () {
-  console.log("El archivo JS se cargó correctamente.");
-  filtrarGrados();
+    console.log("🚀 Lógica académica inicializada (Versión Premium).");
 
-  // Interceptor de clics
-  document.body.addEventListener('click', function (event) {
-    let botonEliminar = event.target.closest('.alerta-eliminar');
+    const selectNivel = document.querySelector('select[name="nivel"]');
+    const selectGrado = document.querySelector('select[name="grado"]');
 
-    if (botonEliminar) {
-      console.log("¡Clic detectado en un botón de eliminar!");
-      event.preventDefault();
+    if (selectNivel && selectGrado && typeof gradosPorNivel !== 'undefined') {
+        const defaultOption = '<option value="">---------</option>';
+        
+        if (!selectNivel.value) {
+            selectGrado.innerHTML = defaultOption;
+            selectGrado.disabled = true;
+        }
 
-      let urlEliminar = botonEliminar.getAttribute('href');
-      let nombreItem = botonEliminar.getAttribute('data-nombre') || "este elemento";
-      let textoExtra = botonEliminar.getAttribute('data-extra') || "";
+    
+        selectNivel.addEventListener('change', function() {
+            const nivelId = this.value;
+            selectGrado.innerHTML = defaultOption; 
 
-      console.log("🔗 URL destino:", urlEliminar);
+            if (nivelId && gradosPorNivel[nivelId]) {
+                
+                gradosPorNivel[nivelId].forEach(grado => {
+                    const option = document.createElement('option');
+                    option.value = grado.id;
+                    option.textContent = grado.nombre;
+                    selectGrado.appendChild(option);
+                });
+                
+                selectGrado.disabled = false;
+            } else {
+                
+                selectGrado.disabled = true;
+            }
+        });
+    }
 
-      // Verificamos si la librería SweetAlert existe en esta página
-      if (typeof Swal === 'undefined') {
-          console.error("ERROR: SweetAlert2 no está cargado. Usando alerta de respaldo.");
-          if(confirm(`¿Estás seguro de eliminar ${nombreItem}?`)) {
-              window.location.href = urlEliminar;
-          }
-          return;
-      }
+    document.body.addEventListener('click', function (event) {
+        const btnEliminar = event.target.closest('.alerta-eliminar');
 
-      console.log("Lanzando SweetAlert...");
-      Swal.fire({
+        if (btnEliminar) {
+            event.preventDefault();
+            const url = btnEliminar.getAttribute('href');
+            const nombre = btnEliminar.getAttribute('data-nombre') || "este elemento";
+            const extra = btnEliminar.getAttribute('data-extra') || "";
+
+            confirmarAccion(url, nombre, extra);
+        }
+    });
+});
+
+
+function confirmarAccion(url, nombre, extra) {
+    if (typeof Swal === 'undefined') {
+        if (confirm(`¿Está seguro de eliminar ${nombre}?`)) window.location.href = url;
+        return;
+    }
+
+    Swal.fire({
         title: '¿Estás seguro?',
-        text: textoExtra ? textoExtra : `Estás a punto de eliminar ${nombreItem}. Esta acción no se puede deshacer.`,
+        text: extra || `Estás a punto de eliminar ${nombre}. Esta acción no se puede deshacer.`,
         icon: 'warning',
         showCancelButton: true,
         confirmButtonColor: '#ef4444',
         cancelButtonColor: '#64748b',
         confirmButtonText: '<i class="fa-solid fa-trash-can"></i> Sí, eliminar',
         cancelButtonText: 'Cancelar',
-        reverseButtons: true
-      }).then((result) => {
+        reverseButtons: true,
+        focusCancel: true
+    }).then((result) => {
         if (result.isConfirmed) {
-          console.log("Confirmado. Redirigiendo...");
-          window.location.href = urlEliminar;
-        } else {
-          console.log("Cancelado por el usuario.");
+            window.location.href = url;
         }
-      });
+    });
+}
+
+function abrirSelectorCreacion(urlBase) {
+    Swal.fire({
+        title: '¿Qué desea crear?',
+        text: 'Seleccione el tipo de registro académico',
+        icon: 'question',
+        showDenyButton: true,
+        showCancelButton: true,
+        confirmButtonText: '<i class="fa-solid fa-layer-group"></i> Crear Nivel',
+        confirmButtonColor: '#0ea5e9',
+        denyButtonText: '<i class="fa-solid fa-graduation-cap"></i> Crear Grado',
+        denyButtonColor: '#f59e0b',
+        cancelButtonText: 'Cancelar',
+        cancelButtonColor: '#64748b',
+        reverseButtons: false 
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = urlBase + "?tipo=nivel";
+        } else if (result.isDenied) {
+            window.location.href = urlBase + "?tipo=grado";
+        }
+    });
+}
+
+function abrirModal() {
+    const modal = document.getElementById('modalParalelo');
+    if (modal) {
+       
+        const selectNivel = modal.querySelector('select[name="nivel"]');
+        const selectGrado = modal.querySelector('select[name="grado"]');
+        
+        if (selectNivel) selectNivel.value = "";
+        if (selectGrado) {
+            selectGrado.innerHTML = '<option value="">---------</option>';
+            selectGrado.disabled = true;
+        }
+
+        
+        modal.style.display = 'flex';
+        setTimeout(() => modal.classList.add('active'), 10);
     }
-  });
+}
+
+function cerrarModal() {
+    const modal = document.getElementById('modalParalelo');
+    if (modal) {
+       
+        modal.classList.remove('active');
+        
+        setTimeout(() => modal.style.display = 'none', 300);
+    }
+}
+
+
+window.addEventListener('click', (e) => {
+    const modal = document.getElementById('modalParalelo');
+    
+    if (e.target === modal) cerrarModal();
 });

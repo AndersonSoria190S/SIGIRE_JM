@@ -79,6 +79,18 @@ class RegistroPersonalForm(forms.ModelForm):
             raise ValidationError("El celular debe tener exactamente 8 dígitos.")
         return cel
     
+    def clean_rol(self):
+        rol = self.cleaned_data.get('rol')
+        
+        if rol == 'director':
+            
+            existe_director = User.objects.filter(rol='director', is_active=True).exclude(pk=self.instance.pk).exists()
+            
+            if existe_director:
+                raise ValidationError("Ya existe un Director activo en el sistema. Solo puede haber uno.")
+        
+        return rol
+    
 class CustomPasswordChangeForm(PasswordChangeForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

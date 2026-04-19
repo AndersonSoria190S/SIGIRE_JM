@@ -1,0 +1,182 @@
+.academic-dashboard {
+    padding: 30px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.header-section {
+    margin-bottom: 40px;
+    text-align: center;
+    border-bottom: 2px solid #f1f5f9;
+    padding-bottom: 20px;
+}
+
+.header-section h2 {
+    color: #1e293b;
+    font-size: 2.2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+}
+
+.registration-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+}
+
+.card-large {
+    max-width: 700px;
+    width: 100%;
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+.card-header-large {
+    padding: 35px 45px;
+    border-bottom: 2px solid #f1f5f9;
+}
+
+.card-header-large.nivel { background: #f0f9ff; color: #0369a1; }
+.card-header-large.grado { background: #fffbeb; color: #b45309; }
+
+.card-header-large h3 {
+    margin: 0;
+    font-size: 1.7rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.card-body-large {
+    padding: 50px;
+}
+
+/* Inputs y Selects "Grandes" */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 12px;
+    font-size: 1.05rem;
+}
+
+.form-control-academic {
+    width: 100%;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 2px solid #e2e8f0;
+    background: #f8fafc;
+    font-size: 1.1rem;
+    color: #1e293b;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+.form-control-academic:focus {
+    background: #ffffff;
+    border-color: #3b82f6;
+    outline: none;
+    box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.1);
+}
+
+/* Botón de Guardado */
+.btn-save-academic {
+    width: 100%;
+    padding: 18px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    color: white;
+    margin-top: 10px;
+}
+
+.btn-nivel { background: #0ea5e9; box-shadow: 0 4px 12px rgba(14, 165, 233, 0.2); }
+.btn-grado { background: #f59e0b; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); }
+.btn-edit { background: #10b981 !important; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2); }
+
+.btn-save-academic:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.05);
+}
+
+.btn-save-academic:active { transform: translateY(0); }
+
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    margin-top: 20px;
+    padding: 12px;
+    color: #64748b;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.2s;
+}
+
+.btn-back:hover { color: #1e293b; }
+
+.btn-save-academic:disabled {
+    background-color: #cbd5e1 !important; 
+    color: #94a3b8 !important;
+    cursor: not-allowed;
+    transform: none !important;
+    box-shadow: none !important;
+    opacity: 0.7 !important; 
+}
+/* Contenedor de mensajes para que no se pegue al header */
+.messages-container {
+    max-width: 700px;
+    margin: 20px auto;
+    width: 100%;
+    padding: 0 15px;
+}
+
+.alert-msg {
+    padding: 16px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+    font-size: 1rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from { transform: translateY(-15px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.alert-error {
+    background: #fff1f2;
+    color: #be123c;
+    border-left: 6px solid #e11d48;
+}
+
+.alert-success {
+    background: #f0fdf4;
+    color: #15803d;
+    border-left: 6px solid #22c55e;
+}

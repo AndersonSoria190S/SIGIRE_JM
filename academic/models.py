@@ -1,4 +1,5 @@
 from django.db import models
+from django.core.exceptions import ValidationError
 
 # Clases para el manejo de Nivel, Grado, Gestion y Paralelo
 
@@ -13,22 +14,38 @@ class Nivel(models.Model):
 
 #CLASE GRADO
 class Grado(models.Model):
+    # Definimos los nombres permitidos
+    NOMBRES_GRADOS = [
+        ('Primero', 'Primero'),
+        ('Segundo', 'Segundo'),
+        ('Tercero', 'Tercero'),
+        ('Cuarto', 'Cuarto'),
+        ('Quinto', 'Quinto'),
+        ('Sexto', 'Sexto'),
+    ]
+
     nivel = models.ForeignKey(Nivel, on_delete=models.CASCADE, related_name='grados')
-    nombre = models.CharField(max_length=50)
+    nombre = models.CharField(max_length=50, choices=NOMBRES_GRADOS) # Cambiado a choices
     estado = models.BooleanField(default=True)
+    
+    @property
+    def tiene_paralelos_activos(self):
+        return self.paralelo_set.filter(estado=True).exists()
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['nivel', 'nombre'], 
-                name='unique_grado_por_nivel',
+    def clean(self):
+        if self.nivel_id and self.nombre: 
+            if not self.pk:
+               
+                if Grado.objects.filter(nivel=self.nivel, estado=True).count() >= 6:
+                    raise ValidationError(f"El nivel '{self.nivel.nombre}' ya completó los 6 grados activos permitidos.")
+            
+           
+            if not self.pk and Grado.objects.filter(nivel=self.nivel, nombre=self.nombre, estado=True).exists():
+                 raise ValidationError(f"El grado '{self.nombre}' ya existe y está activo en este nivel.")
 
-                violation_error_message="Ya existe este grado registrado en el nivel seleccionado."
-            )
-        ]
-
-    def __str__(self):
-        return f"{self.nombre} - {self.nivel.nombre}"
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
 
 #CLASE GESTION
 class Gestion(models.Model):
@@ -37,7 +54,7 @@ class Gestion(models.Model):
     estado = models.BooleanField(default=True)
 
     def __str__(self):
-        return str(self.año)
+        return str(self.anio)
 
 #CLASE PARALELO
 class Paralelo(models.Model):
@@ -45,6 +62,11 @@ class Paralelo(models.Model):
     letra = models.CharField(max_length=2)
     cupo_max = models.PositiveIntegerField(default=30)
     estado = models.BooleanField(default=True)
+    
+    @property
+    def tiene_inscritos(self):
+    
+        return self.inscripcion_set.exists()
 
     class Meta:
         constraints = [

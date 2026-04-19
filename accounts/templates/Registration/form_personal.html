@@ -34,8 +34,12 @@
             </div>
 
             <div class="form-actions">
-                <button type="submit" class="btn-save" id="btn-submit">
-                    <i class="fa-solid fa-check"></i> Finalizar Registro
+                <button type="submit" 
+                        class="btn-save" 
+                        id="btn-submit" 
+                        {% if edit_mode %}disabled{% endif %}>
+                    <i class="fa-solid fa-check"></i> 
+                    {% if edit_mode %}Guardar Cambios{% else %}Finalizar Registro{% endif %}
                 </button>
                 <a href="{% url 'list_personal' %}" class="btn-cancel">
                     Cancelar y Volver
