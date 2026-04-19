@@ -6,27 +6,20 @@
 {% endblock %}
 
 {% block content %}
-  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}" />
+  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}?v=7" />
 
   <div class="academic-dashboard">
     <div class="header-section">
       <h2>Panel de Control Académico</h2>
-      <p>Gestión de años escolares, niveles, grados y paralelos.</p>
+      <p>Gestión estratégica de periodos escolares y oferta académica.</p>
     </div>
 
     <div class="grid-container">
       <div class="card">
         <div class="card-header">
-          <h3><i class="fa-solid fa-calendar-days"></i> Gestiones Escolares</h3>
-
+          <h3><i class="fa-solid fa-calendar-check"></i> Gestiones Escolares</h3>
           {% if mostrar_btn_gestion %}
-            <a href="{% url 'crear_gestion' %}" 
-               class="btn-sm btn-add alerta-eliminar" 
-               style="text-decoration: none;" 
-               data-nombre="la Gestión {{ siguiente_anio }}"
-               data-extra="Esta acción activará el nuevo año escolar y cerrará la gestión actual.">
-               <i class="fa-solid fa-plus"></i> Crear {{ siguiente_anio }}
-            </a>
+            <a href="{% url 'crear_gestion' %}" class="btn-sm btn-add alerta-eliminar" data-nombre="la Gestión {{ siguiente_anio }}" data-extra="Esta acción activará el nuevo año escolar y cerrará la gestión actual."><i class="fa-solid fa-plus"></i> Abrir {{ siguiente_anio }}</a>
           {% endif %}
         </div>
         <div class="card-body">
@@ -36,18 +29,16 @@
                 <span class="gestion-year">{{ gestion.anio }}</span>
                 <div class="actions">
                   {% if gestion.estado %}
-                    <span class="badge active"><i class="fa-solid fa-check"></i> Activa</span>
+                    <span class="badge active"><i class="fa-solid fa-check-circle"></i> Gestión Actual</span>
                   {% else %}
                     {% if gestion.anio >= anio_actual %}
-                      <a href="{% url 'toggle_gestion' gestion.pk %}" class="btn-toggle" title="Activar esta gestión"><i class="fa-solid fa-power-off"></i> Activar</a>
+                      <a href="{% url 'toggle_gestion' gestion.pk %}" class="btn-toggle"><i class="fa-solid fa-play"></i> Activar</a>
                     {% else %}
-                      <span class="badge" style="background: #e2e8f0; color: #64748b; padding: 6px 12px; border-radius: 20px; font-size: 0.85rem; font-weight: 600;"><i class="fa-solid fa-lock"></i> Cerrada</span>
+                      <span class="badge" style="background: #f1f5f9; color: #94a3b8;"><i class="fa-solid fa-lock"></i> Histórico</span>
                     {% endif %}
                   {% endif %}
                 </div>
               </li>
-            {% empty %}
-              <li class="empty-msg">No hay gestiones registradas.</li>
             {% endfor %}
           </ul>
         </div>
@@ -55,52 +46,43 @@
 
       <div class="card">
         <div class="card-header">
-          <h3><i class="fa-solid fa-layer-group"></i> Niveles y Grados</h3>
-          <a href="{% url 'crear_nivel_grado' %}" class="btn-sm btn-add" title="Añadir Nivel/Grado" style="text-decoration: none; display: inline-flex; align-items: center; justify-content: center;"><i class="fa-solid fa-plus"></i></a>
+          <h3><i class="fa-solid fa-sitemap"></i> Niveles y Grados</h3>
+          <button onclick="abrirSelectorCreacion('{% url 'crear_nivel_grado' %}')" class="btn-sm btn-add" title="Añadir Nuevo..."><i class="fa-solid fa-plus"></i></button>
         </div>
         <div class="card-body">
           {% for nivel in niveles %}
-            <div class="nivel-group" style="border-bottom: 1px solid #f1f5f9; padding-bottom: 15px; margin-bottom: 15px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                <h4 class="nivel-title" style="margin: 0; color: #1e293b;">{{ nivel.nombre }}</h4>
+            <div class="nivel-group">
+              <div class="nivel-header">
+                <h4 class="nivel-title">{{ nivel.nombre }}</h4>
+                <div class="action-buttons">
+                  <a href="{% url 'editar_nivel' nivel.pk %}" class="btn-edit" style="color: #3b82f6;"><i class="fa-solid fa-pen"></i></a>
 
-                <div class="nivel-actions">
-                  <a href="{% url 'editar_nivel' nivel.pk %}" title="Editar Nivel" style="color: #64748b; margin-right: 10px;">
-                    <i class="fa-solid fa-pen-to-square"></i>
-                  </a>
-                  <a href="{% url 'eliminar_nivel' nivel.pk %}" 
-                     title="Eliminar Nivel" 
-                     style="color: #ef4444;" 
-                     class="alerta-eliminar"
-                     data-nombre="el Nivel {{ nivel.nombre }}"
-                     data-extra="Se borrarán todos los grados y paralelos asociados a este nivel.">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </a>
+                  {% with tiene_grados=nivel.grados.all %}
+                    {% if not tiene_grados %}
+                      <a href="{% url 'eliminar_nivel' nivel.pk %}" class="btn-delete alerta-eliminar" data-nombre="{{ nivel.nombre }}" style="color: #ef4444;"><i class="fa-solid fa-trash"></i></a>
+                    {% endif %}
+                  {% endwith %}
                 </div>
               </div>
-
-              <div class="grados-tags" style="display: flex; flex-wrap: wrap; gap: 8px;">
+              <div class="grados-tags">
                 {% for grado in grados %}
                   {% if grado.nivel == nivel %}
-                    <div class="tag-grado" style="background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 5px 12px; border-radius: 20px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px;">
-                      <strong>{{ grado.nombre }}</strong>
+                    <div class="tag-grado">
+                      <span>{{ grado.nombre }}</span>
+                      <div class="tag-actions">
+                        {% if not grado.id in grados_ocupados %}
+                          <a href="{% url 'editar_grado' grado.pk %}" style="color: #0ea5e9;" title="Editar Grado"><i class="fa-solid fa-pen"></i></a>
 
-                      <div style="display: flex; gap: 5px; border-left: 1px solid #bae6fd; padding-left: 8px; margin-left: 5px;">
-                        <a href="{% url 'editar_grado' grado.pk %}" style="color: #0ea5e9; font-size: 0.75rem;"><i class="fa-solid fa-pen"></i></a>
-                        <a href="{% url 'eliminar_grado' grado.pk %}" 
-                           style="color: #ef4444; font-size: 0.75rem;" 
-                           class="alerta-eliminar"
-                           data-nombre="el grado {{ grado.nombre }}">
-                           <i class="fa-solid fa-xmark"></i>
-                        </a>
+                          <a href="{% url 'eliminar_grado' grado.pk %}" class="alerta-eliminar" data-nombre="{{ grado.nombre }}" style="color: #ef4444;" title="Eliminar Grado"><i class="fa-solid fa-xmark"></i></a>
+                        {% else %}
+                          <span style="color: #94a3b8; font-size: 0.75rem;" title="Grado bloqueado: Tiene paralelos activos"><i class="fa-solid fa-lock"></i></span>
+                        {% endif %}
                       </div>
                     </div>
                   {% endif %}
                 {% endfor %}
               </div>
             </div>
-          {% empty %}
-            <p class="empty-msg">No hay niveles registrados.</p>
           {% endfor %}
         </div>
       </div>
@@ -108,17 +90,17 @@
 
     <div class="card full-width mt-20">
       <div class="card-header">
-        <h3><i class="fa-solid fa-users-rectangle"></i> Paralelos y Cupos</h3>
-        <button class="btn-sm btn-add" onclick="abrirModal()" style="cursor: pointer;"><i class="fa-solid fa-plus"></i> Nuevo Paralelo</button>
+        <h3><i class="fa-solid fa-users-rectangle"></i> Configuración de Paralelos y Cupos</h3>
+        <button class="btn-sm btn-add" onclick="abrirModal()"><i class="fa-solid fa-plus-circle"></i> Nuevo Paralelo</button>
       </div>
       <div class="card-body">
         <table class="tabla-academica">
           <thead>
             <tr>
-              <th>Nivel</th>
-              <th>Grado</th>
+              <th>Nivel Educativo</th>
+              <th>Grado Escolar</th>
               <th>Paralelo</th>
-              <th>Cupo Máximo</th>
+              <th>Cupo Disponible</th>
               <th style="text-align: center;">Acciones</th>
             </tr>
           </thead>
@@ -126,23 +108,22 @@
             {% for paralelo in paralelos %}
               <tr>
                 <td>{{ paralelo.grado.nivel.nombre }}</td>
-                <td><strong>{{ paralelo.grado.nombre }}</strong></td>
-                <td><span class="badge-paralelo">{{ paralelo.letra }}</span></td>
-                <td>{{ paralelo.cupo_max }} alumnos</td>
-                
-                <td style="text-align: center;">
-                  <a href="{% url 'eliminar_paralelo' paralelo.pk %}" 
-                     style="color: #ef4444; font-size: 1.1rem; transition: 0.2s;" 
-                     title="Eliminar Paralelo"
-                     class="alerta-eliminar"
-                     data-nombre="el Paralelo {{ paralelo.letra }} de {{ paralelo.grado.nombre }}">
-                    <i class="fa-solid fa-trash-can"></i>
-                  </a>
+                <td>
+                  <strong>{{ paralelo.grado.nombre }}</strong>
                 </td>
-              </tr>
-            {% empty %}
-              <tr>
-                <td colspan="5" class="empty-msg text-center">No hay paralelos registrados.</td>
+                <td>
+                  <span class="badge-paralelo">{{ paralelo.letra }}</span>
+                </td>
+                <td>
+                  <i class="fa-solid fa-user-group"></i> {{ paralelo.cupo_max }} plazas
+                </td>
+                <td style="text-align: center;">
+                  {% if not paralelo.tiene_inscritos %}
+                    <a href="{% url 'eliminar_paralelo' paralelo.pk %}" class="alerta-eliminar" data-nombre="Paralelo {{ paralelo.letra }}" style="color: #ef4444; font-size: 1.2rem;" title="Desactivar Paralelo"><i class="fa-solid fa-trash-can"></i></a>
+                  {% else %}
+                    <span class="badge" style="background: #f8fafc; color: #94a3b8; font-size: 0.8rem; border: 1px solid #e2e8f0; padding: 6px 12px;" title="Protegido: Tiene alumnos inscritos"><i class="fa-solid fa-lock"></i> En Uso</span>
+                  {% endif %}
+                </td>
               </tr>
             {% endfor %}
           </tbody>
@@ -151,35 +132,57 @@
     </div>
   </div>
 
-  <div id="modalParalelo" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.6); align-items: center; justify-content: center; backdrop-filter: blur(2px);">
-    <div style="background: white; padding: 25px; border-radius: 12px; width: 100%; max-width: 400px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1);">
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #e2e8f0; padding-bottom: 10px;">
-        <h3 style="margin: 0; color: #1e293b;"><i class="fa-solid fa-users-rectangle"></i> Configurar Paralelo</h3>
-        <button onclick="cerrarModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #94a3b8;">&times;</button>
+  <div id="modalParalelo" class="modal-overlay">
+    <div class="modal-content-premium">
+      <div class="modal-header-premium">
+        <h3><i class="fa-solid fa-wand-magic-sparkles"></i> Asignación de Paralelo</h3>
+        <button type="button" onclick="cerrarModal()" class="btn-close-modal">&times;</button>
       </div>
 
-      <form action="{% url 'crear_paralelo' %}" method="post">
-        {% csrf_token %}
+      <div class="modal-body-premium">
+        <form action="{% url 'crear_paralelo' %}" method="post">
+          {% csrf_token %}
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
-          <div>
-            <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 5px;">Nivel:</label>
-            {{ form_paralelo.nivel }}
+          <div class="form-group-premium">
+            <label><i class="fa-solid fa-layer-group"></i> Nivel Educativo:</label>
+            <div class="select-wrapper">{{ form_paralelo.nivel }}</div>
           </div>
-          <div>
-            <label style="display: block; font-weight: 600; color: #475569; margin-bottom: 5px;">Grado a Crear:</label>
-            {{ form_paralelo.grado }}
+
+          <div class="form-group-premium">
+            <label><i class="fa-solid fa-graduation-cap"></i> Grado de Destino:</label>
+            <div class="select-wrapper">{{ form_paralelo.grado }}</div>
           </div>
-        </div>
 
-        <div style="background-color: #f0f9ff; padding: 12px; border-radius: 6px; margin-bottom: 20px; font-size: 0.85rem; color: #0369a1; border: 1px solid #bae6fd;">
-          <i class="fa-solid fa-wand-magic-sparkles"></i> <strong>Modo Automático:</strong> La letra del paralelo (A, B, C...) y sus 30 cupos se asignarán solos siguiendo el orden correcto.
-        </div>
+          <div class="info-box-premium">
+            <div class="info-icon">
+              <i class="fa-solid fa-robot"></i>
+            </div>
+            <div class="info-text">
+              <strong>Generación Inteligente</strong>
+              <span>El sistema asignará automáticamente la siguiente letra disponible (A, B, C...) con 30 cupos.</span>
+            </div>
+          </div>
 
-        <button type="submit" style="width: 100%; padding: 12px; background: #3b82f6; color: white; border: none; border-radius: 8px; font-weight: 700; cursor: pointer; transition: 0.3s;"><i class="fa-solid fa-bolt"></i> Generar Paralelo</button>
-      </form>
+          <button type="submit" class="btn-submit-premium"><i class="fa-solid fa-bolt"></i> Generar Paralelo</button>
+        </form>
+      </div>
     </div>
   </div>
 
-  <script src="{% static 'academic/js/structure_academic.js' %}?v=3"></script>
+  <script>
+    const gradosPorNivel = {
+        {% for nivel in niveles %}
+            "{{ nivel.id }}": [
+                {% for grado in grados %}
+                    {% if grado.nivel.id == nivel.id %}
+                        { id: "{{ grado.id }}", nombre: "{{ grado.nombre }}" },
+                    {% endif %}
+                {% endfor %}
+            ],
+        {% endfor %}
+    };
+</script>
+
+  <script src="{% static 'academic/js/form_nivel_grade.js' %}?v=7"></script>
+  <script src="{% static 'academic/js/structure_academic.js' %}?v=7"></script>
 {% endblock %}
