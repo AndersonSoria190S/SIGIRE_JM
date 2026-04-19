@@ -32,8 +32,12 @@
                 </div>
             {% endif %}
 
-            <form action="{% url 'crear_estudiante' %}{% if request.GET.tutor_id %}?tutor_id={{ request.GET.tutor_id }}{% endif %}" method="POST">
+            <form action="{% url 'crear_estudiante' %}" method="POST">
                 {% csrf_token %}
+                
+                {% if tutor_seleccionado %}
+                    <input type="hidden" name="tutor_id" value="{{ tutor_seleccionado.pk }}">
+                {% endif %}
                 
                 <div class="student-grid">
                     
@@ -145,14 +149,14 @@
                     {% if tutor_seleccionado %}
                     <div class="form-group">
                         <label><i class="fa-solid fa-people-arrows"></i> Relación con el Tutor</label>
-                        <select name="relacion_tutor" class="student-input" required>
+                        <select name="relacion" class="student-input" required>
                             <option value="">Seleccione parentesco...</option>
                             <option value="Padre">Padre</option>
                             <option value="Madre">Madre</option>
                             <option value="Abuelo/a">Abuelo/a</option>
                             <option value="Tío/a">Tío/a</option>
                             <option value="Hermano/a">Hermano/a</option>
-                            <option value="Otro">Otro Apoderado</option>
+                            <option value="Apoderado">Otro Apoderado</option>
                         </select>
                         <small class="input-hint">¿Qué parentesco tiene {{ tutor_seleccionado.nombres }} con el estudiante?</small>
                     </div>
@@ -175,7 +179,7 @@
 
 <script>
     const configEstudiante = {
-        // Convierte True/False de Python a true/false de JS
+
         mostrarPregunta: {{ mostrar_pregunta|yesno:"true,false" }}, 
         urlListaTutores: "{% url 'list_tutores' %}?modo_seleccion=true",
         urlRegistrarTutor: "{% url 'registrar_tutor' %}"

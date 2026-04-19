@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
 
-    // 1. --- FORMATEO Y VALIDACIÓN DE INPUTS ---
     const capitalizarTexto = function() {
         let valor = this.value;
         valor = valor.replace(/[^a-zA-ZáéíóúÁÉÍÓÚñÑ\s]/g, '');

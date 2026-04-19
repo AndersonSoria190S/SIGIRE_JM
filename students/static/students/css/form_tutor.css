@@ -1,23 +1,230 @@
-.form-container-wrapper { max-width: 850px; margin: 30px auto; padding: 0 15px; }
-.tutor-form-card { background: #ffffff; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; overflow: hidden; }
-.tutor-form-header { background: #1e293b; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; color: white; }
-.tutor-form-header h3 { margin: 0; font-size: 1.15rem; font-weight: 700; display: flex; align-items: center; gap: 12px; }
-.module-badge { font-size: 0.75rem; background: rgba(255,255,255,0.1); padding: 4px 12px; border-radius: 20px; font-weight: 600; }
-.tutor-form-body { padding: 40px; }
+/* --- Variables base (Actualizadas al Rojo Institucional) --- */
+:root {
+    --primary-color: #c62828;       /* Rojo Colegio */
+    --primary-hover: #b71c1c;       /* Rojo Oscuro */
+    --bg-light: #f8fafc;
+    --border-color: #e2e8f0;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --danger-color: #ef4444;
+}
 
-.tutor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; }
+/* --- Contenedor Principal --- */
+.form-container-wrapper { 
+    max-width: 850px; 
+    margin: 40px auto; 
+    padding: 0 20px;
+    animation: slideUpFade 0.4s ease-out forwards;
+}
+
+@keyframes slideUpFade {
+    from { opacity: 0; transform: translateY(15px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Tarjeta del Formulario --- */
+.tutor-form-card { 
+    background: #ffffff; 
+    border-radius: 16px; 
+    box-shadow: 0 20px 40px -15px rgba(0,0,0,0.05), 0 4px 6px -2px rgba(0,0,0,0.02); 
+    border: 1px solid var(--border-color); 
+    overflow: hidden; 
+}
+
+/* --- Encabezado (Ajustado al Pizarra + Rojo) --- */
+.tutor-form-header { 
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); /* Pizarra Sidebar */
+    padding: 24px 32px; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    color: white;
+    border-bottom: 4px solid var(--primary-color); /* Línea roja de acento */
+}
+
+.tutor-form-header h3 { 
+    margin: 0; 
+    font-size: 1.25rem; 
+    font-weight: 800; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px;
+    letter-spacing: -0.01em;
+}
+
+.tutor-form-header h3 i {
+    color: #fca5a5; /* Un rojo/rosado muy claro para resaltar el ícono sobre oscuro */
+}
+
+.module-badge { 
+    font-size: 0.75rem; 
+    background: rgba(255,255,255,0.15); 
+    padding: 6px 14px; 
+    border-radius: 20px; 
+    font-weight: 700; 
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+}
+
+/* --- Cuerpo del Formulario --- */
+.tutor-form-body { 
+    padding: 40px 45px; 
+}
+
+.tutor-grid { 
+    display: grid; 
+    grid-template-columns: 1fr 1fr; 
+    gap: 28px; 
+}
+
 .full-width { grid-column: span 2; }
-.ci-grid { display: grid; grid-template-columns: 2fr 1fr 1.5fr; gap: 15px; } /* Proporciones de la CI */
 
-.form-group label { font-weight: 700; color: #334155; margin-bottom: 10px; font-size: 0.85rem; display: flex; align-items: center; gap: 8px; }
-.form-group label i { color: #64748b; }
-.input-hint { color: #94a3b8; font-size: 0.7rem; margin-top: 5px; display: block; }
+.ci-grid { 
+    display: grid; 
+    grid-template-columns: 2fr 1fr 1.5fr; 
+    gap: 16px; 
+}
 
-.tutor-input { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e1; border-radius: 8px; font-size: 0.95rem; background-color: #f8fafc; transition: all 0.2s; box-sizing: border-box; font-family: 'Inter', sans-serif; }
-.tutor-input:focus { border-color: #3b82f6; background-color: #ffffff; box-shadow: 0 0 0 4px rgba(59,130,246,0.1); outline: none; }
+/* --- Etiquetas (Labels) --- */
+.form-group label { 
+    font-weight: 700; 
+    color: var(--text-main); 
+    margin-bottom: 10px; 
+    font-size: 0.9rem; 
+    display: flex; 
+    align-items: center; 
+    gap: 8px; 
+}
 
-.form-footer-actions { margin-top: 35px; padding-top: 25px; border-top: 1px solid #f1f5f9; display: flex; gap: 15px; }
-.btn-save-tutor { flex: 2; background: #3b82f6; color: white; border: none; padding: 14px; border-radius: 8px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; transition: 0.3s; }
-.btn-save-tutor:hover { background: #2563eb; }
-.btn-cancel-tutor { flex: 1; background: #f1f5f9; color: #64748b; text-align: center; text-decoration: none; padding: 14px; border-radius: 8px; font-weight: 700; transition: 0.3s; display: flex; align-items: center; justify-content: center;}
-.btn-cancel-tutor:hover { background: #e2e8f0; color: #1e293b; }
+.form-group label i { 
+    color: var(--primary-color); 
+    font-size: 1rem;
+}
+
+.input-hint { 
+    color: var(--text-muted); 
+    font-size: 0.75rem; 
+    margin-top: 6px; 
+    display: block; 
+    font-weight: 500;
+}
+
+/* --- Inputs y Selects --- */
+.tutor-input { 
+    width: 100%; 
+    padding: 14px 18px; 
+    border: 2px solid var(--border-color); 
+    border-radius: 10px; 
+    font-size: 0.95rem; 
+    color: var(--text-main);
+    background-color: var(--bg-light); 
+    transition: all 0.3s ease; 
+    box-sizing: border-box; 
+    font-family: inherit; 
+}
+
+.tutor-input::placeholder {
+    color: #94a3b8;
+    opacity: 0.8;
+}
+
+.tutor-input:focus { 
+    border-color: var(--primary-color); 
+    background-color: #ffffff; 
+    box-shadow: 0 0 0 5px rgba(198, 40, 40, 0.1); /* Brillo rojo suave */
+    outline: none; 
+}
+
+/* --- Errores Globales --- */
+.error-message {
+    background-color: #fef2f2;
+    border-left: 5px solid var(--danger-color);
+    color: #991b1b;
+    padding: 16px 20px;
+    border-radius: 8px;
+    margin-bottom: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* --- Botones --- */
+.form-footer-actions { 
+    margin-top: 40px; 
+    padding-top: 30px; 
+    border-top: 2px dashed var(--border-color); 
+    display: flex; 
+    gap: 20px; 
+}
+
+.btn-save-tutor { 
+    flex: 2; 
+    background: var(--primary-color); 
+    color: white; 
+    border: none; 
+    padding: 16px; 
+    border-radius: 10px; 
+    font-weight: 800; 
+    font-size: 1.05rem; 
+    cursor: pointer; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 12px; 
+    transition: all 0.3s; 
+    box-shadow: 0 4px 12px rgba(198, 40, 40, 0.2);
+}
+
+.btn-save-tutor:hover { 
+    background: var(--primary-hover); 
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(198, 40, 40, 0.3);
+}
+
+.btn-cancel-tutor { 
+    flex: 1; 
+    background: #f1f5f9; 
+    color: var(--text-muted); 
+    text-align: center; 
+    text-decoration: none; 
+    padding: 16px; 
+    border-radius: 10px; 
+    font-weight: 700; 
+    font-size: 1rem;
+    transition: all 0.3s; 
+    display: flex; 
+    align-items: center; 
+    justify-content: center;
+    border: 2px solid transparent;
+}
+
+.btn-cancel-tutor:hover { 
+    background: #e2e8f0; 
+    color: var(--text-main); 
+    border-color: #cbd5e1;
+}
+
+/* --- Estados de Bloqueo (Consistentes) --- */
+.locked-badge {
+    color: var(--primary-color); /* Cambiado a rojo para combinar */
+    font-size: 0.75rem;
+    margin-left: 10px;
+    font-weight: 700;
+}
+
+.input-disabled {
+    background-color: #f1f5f9 !important; /* Un poco más claro para mejor contraste */
+    color: #94a3b8 !important;
+    cursor: not-allowed !important;
+    border-color: #cbd5e1 !important;
+}
+
+.btn-disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+    transform: none !important;
+    box-shadow: none !important;
+    background: #94a3b8 !important;
+}

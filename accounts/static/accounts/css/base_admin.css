@@ -57,7 +57,6 @@ body {
 .nav-item:hover,
 .nav-item.active {
     background-color: var(--primary-color);
-    /* Hover en Rojo */
     color: var(--white);
     border-left: 4px solid var(--white);
 }
@@ -134,8 +133,8 @@ body {
 .active-sub {
     opacity: 1;
     color: #ffffff !important;
-    border-left: 3px solid #3b82f6;
-    background: rgba(59, 130, 246, 0.1);
+    border-left: 3px solid var(--primary-color); 
+    background: rgba(198, 40, 40, 0.1);
 }
 
 .chevron-icon {
@@ -145,4 +144,8 @@ body {
 
 .chevron-icon.rotate {
     transform: rotate(180deg);
+}
+
+.stat-card {
+    border-left: 5px solid var(--primary-color); 
 }

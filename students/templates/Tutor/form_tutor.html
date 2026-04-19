@@ -4,7 +4,7 @@
 {% block page_title %}Registro de Tutor{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'students/css/form_tutor.css' %}?v=1" />
+<link rel="stylesheet" href="{% static 'students/css/form_tutor.css' %}?v=4" />
 
 <div class="form-container-wrapper">
     <div class="tutor-form-card">
@@ -17,12 +17,13 @@
         <div class="tutor-form-body">
 
             {% if form.non_field_errors %}
-                <div style="color: red; margin-bottom: 10px;">
+                <div class="error-message">
+                    <i class="fa-solid fa-circle-exclamation"></i>
                     {{ form.non_field_errors }}
                 </div>
             {% endif %}
 
-            <form action="{% url 'registrar_tutor' %}" method="POST">
+            <form action="" method="POST" id="formTutor" data-edit-mode="{{ edit_mode|yesno:'true,false'|default:'false' }}">
                 {% csrf_token %}
                 
                 <div class="tutor-grid">
@@ -42,27 +43,36 @@
                     </div>
 
                     <div class="form-group full-width">
-                        <label><i class="fa-solid fa-address-card"></i> Cédula de Identidad</label>
+                        <label>
+                            <i class="fa-solid fa-address-card"></i> Cédula de Identidad 
+                            {% if edit_mode %}
+                                <span class="locked-badge">
+                                    <i class="fa-solid fa-lock"></i> No editable
+                                </span>
+                            {% endif %}
+                        </label>
                         <div class="ci-grid">
                             
                             <div>
                                 <input type="text" name="ci_nro"
                                        value="{{ form.ci_nro.value|default:'' }}"
-                                       class="tutor-input"
-                                       placeholder="Número (Ej: 7455337)">
+                                       class="tutor-input {% if edit_mode %}input-disabled{% endif %}"
+                                       placeholder="Número (Ej: 7455337)"
+                                       {% if edit_mode %} readonly {% endif %}>
                                 <small class="input-hint">Número de CI</small>
                             </div>
 
                             <div>
                                 <input type="text" name="ci_comp"
                                        value="{{ form.ci_comp.value|default:'' }}"
-                                       class="tutor-input"
-                                       placeholder="Comp. (Opcional)">
+                                       class="tutor-input {% if edit_mode %}input-disabled{% endif %}"
+                                       placeholder="Comp. (Opcional)"
+                                       {% if edit_mode %} readonly {% endif %}>
                                 <small class="input-hint">Ej: 1, 2</small>
                             </div>
 
                             <div>
-                                <select name="ci_exp" class="tutor-input">
+                                <select name="ci_exp" class="tutor-input {% if edit_mode %}input-disabled{% endif %}" {% if edit_mode %} disabled {% endif %}>
                                     {% for value, label in form.ci_exp.field.choices %}
                                         <option value="{{ value }}"
                                             {% if form.ci_exp.value == value %}selected{% endif %}>
@@ -71,6 +81,10 @@
                                     {% endfor %}
                                 </select>
                                 <small class="input-hint">Expedido</small>
+                                
+                                {% if edit_mode %}
+                                    <input type="hidden" name="ci_exp" value="{{ form.ci_exp.value }}">
+                                {% endif %}
                             </div>
 
                         </div>
@@ -93,7 +107,7 @@
                 </div>
 
                 <div class="form-footer-actions">
-                    <button type="submit" class="btn-save-tutor">
+                    <button type="submit" class="btn-save-tutor" id="btnGuardar">
                         <i class="fa-solid fa-floppy-disk"></i> Guardar Información
                     </button>
                     <a href="{% url 'list_tutores' %}" class="btn-cancel-tutor">Cancelar</a>
@@ -102,4 +116,6 @@
         </div>
     </div>
 </div>
+
+<script src="{% static 'students/js/form_tutor.js' %}?v=4"></script>
 {% endblock %}
