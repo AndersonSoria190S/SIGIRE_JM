@@ -156,11 +156,8 @@ def list_estudiantes(request):
     })
 
 #REGISTRAR ESTUDIANTE 
-
 @login_required
 def crear_estudiante(request):
-    # Intentamos obtener el tutor_id del GET (cuando carga la página) 
-    # o del POST (cuando se envía el formulario)
     tutor_id = request.GET.get('tutor_id') or request.POST.get('tutor_id')
     tutor_guardar = None
     mostrar_pregunta = False
@@ -181,7 +178,6 @@ def crear_estudiante(request):
             return redirect("list_tutores")
 
         if form.is_valid():
-    
             nuevo_estudiante = form.save()
             
             tipo_relacion = request.POST.get('relacion', 'Apoderado')
@@ -192,17 +188,25 @@ def crear_estudiante(request):
                 relacion=tipo_relacion
             )
 
-            messages.success(request, "Estudiante y Tutor vinculados y registrados correctamente.")   
-            return redirect("list_estudiantes")
+            messages.success(request, f"Estudiante {nuevo_estudiante.nombres} y Tutor vinculados correctamente.")   
+            
+           
+            url_destino = reverse('list_estudiantes')
+            return redirect(f"{url_destino}?registrado_id={nuevo_estudiante.pk}&nombre_est={nuevo_estudiante.nombres}")
+           
+            
         else:
             messages.error(request, "Error en el formulario. Verifique los datos.") 
     else:
         form = EstudianteForm()
 
+    departamentos = form.fields['ci_exp'].choices if 'ci_exp' in form.fields else []
+
     context = {
         'form': form,  
         'tutor_seleccionado': tutor_guardar,
         'mostrar_pregunta': mostrar_pregunta,
+        'departamentos': departamentos, 
     }
 
     return render(request, 'Student/form_student.html', context)
@@ -257,28 +261,63 @@ def reactivar_estudiante(request, pk):
 def editar_estudiante(request, pk):
     estudiante = get_object_or_404(Estudiante, pk=pk)
     
-    # 1. Desglosar CI de forma robusta
     full_ci = estudiante.cedula_identidad.strip().upper()
-    partes = full_ci.split() # Separa "27382332-1A" de "PT"
     
-    ci_base = partes[0] if len(partes) > 0 else ""
-    expedido = partes[1] if len(partes) > 1 else ""
+    full_ci_norm = full_ci.replace(' ', '-')
     
-    if '-' in ci_base:
-        nro, comp = ci_base.split('-')
+    while '--' in full_ci_norm:
+        full_ci_norm = full_ci_norm.replace('--', '-')
+        
+    partes_ci = full_ci_norm.split('-')
+    
+    nro = partes_ci[0] if len(partes_ci) > 0 else ""
+    comp = ""
+    expedido = ""
+    
+    if len(partes_ci) == 3:
+        comp = partes_ci[1]
+        expedido = partes_ci[2]
+    elif len(partes_ci) == 2:
+        expedido = partes_ci[1] 
+        
+    dir_texto = estudiante.direccion
+    calle = ""
+    numero = ""
+    zona = ""
+    
+    if ', ' in dir_texto:
+        partes_dir = dir_texto.split(', ')
+        zona = partes_dir[0] if len(partes_dir) > 0 else ""
+        calle = partes_dir[1] if len(partes_dir) > 1 else ""
+        if len(partes_dir) > 2:
+            numero = partes_dir[2].replace("N° ", "").strip()
     else:
-        nro, comp = ci_base, ""
+        calle = dir_texto 
 
     if request.method == "POST":
         form = EditarEstudianteForm(request.POST, instance=estudiante)
+        
         if form.is_valid():
-            form.save()
-            messages.success(request, f"Datos de {estudiante.nombres} actualizados.")
+            est_modificado = form.save(commit=False)
+            
+            zona_post = form.cleaned_data.get('zona', '')
+            calle_post = form.cleaned_data.get('avenida', '')
+            nro_post = form.cleaned_data.get('num_puerta', '')
+            
+            est_modificado.direccion = f"{zona_post}, {calle_post}, N° {nro_post}"
+            
+            est_modificado.save()
+            
+            messages.success(request, f"Datos de {est_modificado.nombres} actualizados.")
             return redirect('list_estudiantes')
+        else:
+            print("\n--- ERRORES EN EDICIÓN ---")
+            print(form.errors)
+            print("--------------------------\n")
+            messages.error(request, "Error en el formulario. Verifique los datos.")
     else:
         form = EditarEstudianteForm(instance=estudiante)
 
-    
     DEPARTAMENTOS = [
         ('LP', 'La Paz'), ('OR', 'Oruro'), ('PT', 'Potosí'), 
         ('CB', 'Cochabamba'), ('SC', 'Santa Cruz'), ('BN', 'Beni'), 
@@ -292,5 +331,8 @@ def editar_estudiante(request, pk):
         'ci_nro_val': nro,
         'ci_comp_val': comp,
         'ci_exp_val': expedido,
+        'dir_calle': calle,
+        'dir_nro': numero,
+        'dir_zona': zona,
         'departamentos': DEPARTAMENTOS 
     })

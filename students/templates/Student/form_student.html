@@ -40,6 +40,10 @@
             <form action="{% if es_edicion %}{% url 'editar_estudiante' estudiante.pk %}{% else %}{% url 'crear_estudiante' %}{% endif %}" method="POST">
                 {% csrf_token %}
                 
+                {% if tutor_seleccionado and not es_edicion %}
+                    <input type="hidden" name="tutor_id" value="{{ tutor_seleccionado.pk }}">
+                {% endif %}
+
                 <div class="student-grid">
                     <div class="form-group full-width">
                         <label><i class="fa-solid fa-user"></i> Nombres</label>
@@ -98,9 +102,41 @@
                     </div>
 
                     <div class="form-group full-width">
-                        <label><i class="fa-solid fa-map-location-dot"></i> Dirección</label>
-                        <input type="text" name="direccion" value="{{ form.direccion.value|default:'' }}" class="student-input" required>
-                    </div>
+    <label><i class="fa-solid fa-map-location-dot"></i> Dirección</label>
+    <div class="ci-grid" style="grid-template-columns: 2fr 1fr 1.5fr;">
+        <div>
+            <input type="text" name="avenida" value="{{ dir_calle|default:'' }}" 
+                   placeholder="Calle o Avenida" class="student-input" required>
+            <small class="input-hint">Calle / Av.</small>
+        </div>
+        <div>
+            <input type="text" name="num_puerta" value="{{ dir_nro|default:'' }}" 
+                   placeholder="N°" class="student-input">
+            <small class="input-hint">Número</small>
+        </div>
+        <div>
+            <input type="text" name="zona" value="{{ dir_zona|default:'' }}" 
+                   placeholder="Zona o Barrio" class="student-input" required>
+            <small class="input-hint">Zona / Barrio</small>
+        </div>
+    </div>
+</div>
+
+{% if tutor_seleccionado and not es_edicion %}
+<div class="form-group full-width" style="background-color: #f8fafc; padding: 18px; border-radius: 12px; border: 1px dashed #cbd5e1; margin-bottom: 25px;">
+    <label style="color: #1e293b; font-size: 0.95rem;"><i class="fa-solid fa-users-rays"></i> Parentesco o Relación con el Tutor</label>
+    <select name="relacion" class="student-input" required style="background-color: white; margin-top: 8px;">
+        <option value="">¿Qué es el tutor del estudiante? Seleccione...</option>
+        <option value="Madre">Madre</option>
+        <option value="Padre">Padre</option>
+        <option value="Abuelo/a">Abuelo / Abuela</option>
+        <option value="Tío/a">Tío / Tía</option>
+        <option value="Hermano/a">Hermano / Hermana</option>
+        <option value="Tutor Legal">Tutor Legal (Asignado)</option>
+        <option value="Apoderado">Apoderado</option>
+    </select>
+</div>
+{% endif %}
 
                     <div class="form-group full-width">
                         <label><i class="fa-solid fa-envelope"></i> Correo (Opcional)</label>
@@ -114,6 +150,8 @@
                     </button>
                     <a href="{% url 'list_estudiantes' %}" class="btn-cancel-student">Cancelar</a> 
                 </div>
+
+                
             </form>
         </div>
     </div>

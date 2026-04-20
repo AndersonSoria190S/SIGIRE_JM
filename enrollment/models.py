@@ -43,6 +43,7 @@ class Inscripcion(models.Model):
 class Requisito(models.Model):
 
     nombre_documento = models.CharField(max_length=100)
+    estado = models.BooleanField(default=True)  # Campo para borrado lógico
 
     def __str__(self):
         return self.nombre_documento

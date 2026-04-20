@@ -120,11 +120,16 @@ class EstudianteForm(forms.ModelForm):
         return estudiante
     
 class EditarEstudianteForm(forms.ModelForm):
+    zona = forms.CharField(max_length=100)
+    avenida = forms.CharField(max_length=100)
+    num_puerta = forms.CharField(max_length=10, required=False) 
+
     class Meta:
         model = Estudiante
+        
         fields = [
             'nombres', 'apellido_paterno', 'apellido_materno', 
-            'fecha_nacimiento', 'genero', 'direccion', 'correo_electronico'
+            'fecha_nacimiento', 'genero', 'correo_electronico'
         ]
         widgets = {
             'fecha_nacimiento': forms.DateInput(attrs={'type': 'date'}),

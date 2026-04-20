@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}?v=15" />
+  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}?v=16" />
 
   <div class="academic-dashboard">
     <div class="header-section">
@@ -141,19 +141,28 @@
             Define la documentación obligatoria para los nuevos registros.
         </p>
 
-        <form action="#" method="POST" class="requirement-form-inline">
-            {% csrf_token %}
-            <div class="inline-group">
-                <div class="input-wrapper">
-                    <i class="fa-solid fa-file-signature input-icon"></i>
-                    <input type="text" name="nombre_documento" 
-                           placeholder="Nombre del documento (Ej: Certificado de Nacimiento Original)" required>
-                </div>
-                <button type="submit" class="btn-add-requirement">
-                    <i class="fa-solid fa-plus"></i> Añadir Requisito
-                </button>
-            </div>
-        </form>
+        <form id="formRequisito" action="{% url 'crear_requisito' %}" method="POST" class="requirement-form-inline">
+    {% csrf_token %}
+    <div class="inline-group">
+        <div class="input-wrapper">
+            <i class="fa-solid fa-file-signature input-icon"></i>
+            <input type="text" name="nombre_documento" id="inputNombreReq" 
+                   placeholder="Nombre del documento (Ej: Certificado de Nacimiento Original)" required>
+        </div>
+        
+        <button type="submit" id="btnAddReq" class="btn-add-requirement">
+            <i class="fa-solid fa-plus"></i> Añadir Requisito
+        </button>
+
+        <button type="submit" id="btnUpdateReq" class="btn-update-req" style="display: none;">
+            <i class="fa-solid fa-floppy-disk"></i> Actualizar
+        </button>
+        
+        <button type="button" id="btnCancelReq" class="btn-cancel-req" style="display: none;" onclick="cancelarEdicion()">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+    </div>
+</form>
 
         <div class="mt-20">
             <table class="tabla-academica"> 
@@ -166,24 +175,36 @@
                 </thead>
                 <tbody>
                     {% for req in requisitos %}
-                    <tr>
-                        <td><span class="badge-id">#{{ req.id }}</span></td>
-                        <td><strong class="text-main">{{ req.nombre_documento }}</strong></td>
-                        <td style="text-align: center;">
-                            <a href="#" class="btn-delete-req alerta-eliminar" data-nombre="{{ req.nombre_documento }}">
-                                <i class="fa-solid fa-trash-can"></i>
-                            </a>
-                        </td>
-                    </tr>
+                        {% if req.estado %} 
+                        <tr>
+                            <td><span class="badge-id">#{{ forloop.counter }}</span></td>
+                            
+                            <td><strong class="text-main">{{ req.nombre_documento }}</strong></td>
+                            <td class="actions-cell">
+                                <a href="javascript:void(0)" class="btn-action edit-req" 
+                                   onclick="cargarEdicion('{{ req.id }}', '{{ req.nombre_documento|escapejs }}')" 
+                                   title="Editar Requisito">
+                                    <i class="fa-solid fa-pen-to-square"></i>
+                                </a>
+
+                                <a href="{% url 'eliminar_requisito' req.id %}" 
+                                   class="btn-delete-req alerta-eliminar" 
+                                   data-nombre="{{ req.nombre_documento }}"
+                                   title="Eliminar Requisito">
+                                    <i class="fa-solid fa-trash-can"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endif %}
                     {% empty %}
-                    <tr>
-                        <td colspan="3" class="empty-state-row">
-                            <div class="empty-info">
-                                <i class="fa-solid fa-folder-open"></i>
-                                <p>No hay requisitos registrados todavía.</p>
-                            </div>
-                        </td>
-                    </tr>
+                        <tr>
+                            <td colspan="3" class="empty-state-row">
+                                <div class="empty-info">
+                                    <i class="fa-solid fa-folder-open"></i>
+                                    <p>No hay requisitos registrados todavía.</p>
+                                </div>
+                            </td>
+                        </tr>
                     {% endfor %}
                 </tbody>
             </table>
@@ -242,6 +263,6 @@
     };
 </script>
 
-  <script src="{% static 'academic/js/form_nivel_grade.js' %}?v=7"></script>
-  <script src="{% static 'academic/js/structure_academic.js' %}?v=7"></script>
+  <script src="{% static 'academic/js/form_nivel_grade.js' %}?v=8"></script>
+  <script src="{% static 'academic/js/structure_academic.js' %}?v=8"></script>
 {% endblock %}
