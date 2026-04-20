@@ -370,3 +370,61 @@ input:checked + .slider:before { transform: translateX(20px); }
     color: #1e293b;
     font-size: 0.95rem;
 }
+
+/* --- Badges de Contacto --- */
+.contact-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.contact-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+/* Badge de Email */
+.email-badge {
+    background-color: #eff6ff;
+    color: #2563eb;
+    border: 1px solid #bfdbfe;
+}
+
+.email-badge:hover {
+    background-color: #2563eb;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2);
+}
+
+/* Badge de Dirección */
+.address-badge {
+    background-color: #f0fdf4;
+    color: #16a34a;
+    border: 1px solid #bbf7d0;
+    padding: 6px 10px; /* Un poco más cuadrado para el puro icono */
+}
+
+.address-badge:hover {
+    background-color: #16a34a;
+    color: #ffffff;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(22, 163, 74, 0.2);
+}
+
+/* Estado sin datos */
+.no-contact {
+    color: #94a3b8;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    cursor: not-allowed;
+}

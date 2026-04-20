@@ -5,7 +5,8 @@ from accounts.decorators import only_director
 from .models import Nivel, Grado, Gestion, Paralelo
 from .forms import NivelForm, GradoForm, ParaleloForm
 from django.utils import timezone
-from enrollment.models import Inscripcion
+from enrollment.models import Inscripcion, Requisito
+
 
 
 @login_required
@@ -15,6 +16,7 @@ def estructura_academica(request):
     niveles = Nivel.objects.filter(estado=True)
     grados = Grado.objects.filter(estado=True).select_related('nivel')
     paralelos = Paralelo.objects.filter(estado=True).select_related('grado__nivel')
+    requisitos = Requisito.objects.all().order_by('id')
 
     grados_ocupados = list(Paralelo.objects.filter(estado=True).values_list('grado_id', flat=True).distinct())
 
@@ -34,11 +36,11 @@ def estructura_academica(request):
         'niveles': niveles,
         'grados': grados,
         'paralelos': paralelos,
+        'requisitos': requisitos, 
         'anio_actual': anio_actual,
         'mostrar_btn_gestion': mostrar_btn_gestion,
         'siguiente_anio': siguiente_anio,
         'form_paralelo': ParaleloForm(),
-
         'grados_ocupados': grados_ocupados, 
     }
     
@@ -232,7 +234,6 @@ def crear_paralelo(request):
             
             orden_grados = ['Primero', 'Segundo', 'Tercero', 'Cuarto', 'Quinto', 'Sexto']
             
-            # --- 1. VERIFICACIÓN DE JERARQUÍA (Revisando solo activos) ---
             if grado_actual.nombre in orden_grados:
                 indice_actual = orden_grados.index(grado_actual.nombre)
                 
@@ -240,7 +241,6 @@ def crear_paralelo(request):
                     nombre_grado_anterior = orden_grados[indice_actual - 1]
                     grado_anterior = Grado.objects.filter(nivel=grado_actual.nivel, nombre=nombre_grado_anterior, estado=True).first()
                     
-                    # Verificamos que el grado anterior exista y tenga paralelos ACTIVOS
                     if not grado_anterior or not Paralelo.objects.filter(grado=grado_anterior, estado=True).exists():
                         messages.error(
                             request, 
@@ -258,9 +258,7 @@ def crear_paralelo(request):
                         )
                         return redirect('estructura_academica')
 
-            # --- 2. LÓGICA DE REACTIVACIÓN O CREACIÓN ---
             
-            # A) ¿Hay algún paralelo oculto que podamos reactivar? (Buscamos el primero en orden alfabético)
             paralelo_oculto = Paralelo.objects.filter(grado=grado_actual, estado=False).order_by('letra').first()
             
             if paralelo_oculto:
@@ -270,8 +268,7 @@ def crear_paralelo(request):
                 messages.success(request, f"Paralelo '{paralelo_oculto.letra}' restaurado automáticamente para {grado_actual.nombre} ({grado_actual.nivel.nombre}).")
                 return redirect('estructura_academica')
 
-            # B) Si no hay ocultos, creamos uno completamente nuevo.
-            # Buscamos la última letra históricamente registrada (sin importar el estado)
+           
             ultimo_historico = Paralelo.objects.filter(grado=grado_actual).order_by('letra').last()
             
             if ultimo_historico:

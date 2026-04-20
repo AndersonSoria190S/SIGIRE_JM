@@ -61,7 +61,29 @@
           </div>
         </div>
 
-        <a href="#" class="nav-item"><i class="fa-solid fa-file-signature"></i> Inscripciones (RF6)</a>
+        <div class="nav-group">
+  <a href="#" class="nav-item toggle-btn {% if 'inscripcion' in request.resolver_match.url_name %}active{% endif %}" 
+     onclick="toggleSubMenu(event, 'submenu-inscripciones')">
+    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+      <span><i class="fa-solid fa-file-signature"></i> Inscripciones</span>
+      <i class="fa-solid fa-chevron-down chevron-icon {% if 'inscripcion' in request.resolver_match.url_name %}rotate{% endif %}"></i>
+    </div>
+  </a>
+
+  <div id="submenu-inscripciones" class="sub-menu {% if 'inscripcion' in request.resolver_match.url_name %}open{% endif %}">
+    
+    <a href="{% url 'registrar_inscripcion_view' %}" 
+        class="nav-item sub-item {% if request.resolver_match.url_name == 'registrar_inscripcion_view' %}active-sub{% endif %}">
+        <i class="fa-solid fa-user-plus"></i> Registrar Inscripción
+    </a>
+
+    <a href="{% url 'list_inscripciones' %}" 
+      class="nav-item sub-item {% if request.resolver_match.url_name == 'list_inscripciones' %}active-sub{% endif %}">
+      <i class="fa-solid fa-list-check"></i> Lista de Inscritos
+    </a>
+
+  </div>
+</div>
       </nav>
     </aside>
 

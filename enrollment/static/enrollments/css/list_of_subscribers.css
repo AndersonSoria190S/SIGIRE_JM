@@ -1,0 +1,192 @@
+/* --- Estilos de Lista de Inscritos --- */
+.list-container-wrapper {
+    max-width: 1200px;
+    margin: 30px auto;
+    padding: 0 20px;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.enroll-list-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    overflow: hidden;
+}
+
+/* --- Header --- */
+.list-header {
+    padding: 25px 32px;
+    background: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.header-info h3 {
+    margin: 0;
+    color: #1e293b;
+    font-size: 1.3rem;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.header-info h3 i {
+    color: #c62828;
+}
+
+.module-badge {
+    font-size: 0.7rem;
+    background: #fee2e2;
+    color: #c62828;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.btn-new-enroll {
+    background: #10b981;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.85rem;
+    transition: 0.3s;
+}
+
+.btn-new-enroll:hover {
+    background: #059669;
+    transform: translateY(-2px);
+}
+
+/* --- Tabla --- */
+.enroll-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.enroll-table th {
+    background: #f8fafc;
+    padding: 16px 24px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+    text-align: left;
+}
+
+.enroll-table td {
+    padding: 20px 24px;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+}
+
+/* --- Detalles de Celda --- */
+.subscriber-name {
+    display: block;
+    font-weight: 700;
+    color: #1e293b;
+    font-size: 0.95rem;
+}
+
+.tutor-sub {
+    color: #94a3b8;
+    font-size: 0.8rem;
+    font-weight: 500;
+}
+
+.rude-badge {
+    font-family: 'Consolas', monospace;
+    background: #f1f5f9;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-weight: 700;
+    color: #1e293b;
+    border: 1px solid #e2e8f0;
+}
+
+.grade-badge {
+    background: #eff6ff;
+    color: #1e40af;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+/* --- Badges de Documentación --- */
+.doc-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 800;
+}
+
+.doc-badge.complete {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.doc-badge.pending {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+/* --- Acciones --- */
+.actions-cell {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.btn-circle {
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: 0.2s;
+    text-decoration: none;
+}
+
+.btn-circle.view {
+    background: #f1f5f9;
+    color: #475569;
+}
+
+.btn-circle.view:hover {
+    background: #1e293b;
+    color: white;
+}
+
+.btn-circle.print {
+    background: #fff1f2;
+    color: #c62828;
+}
+
+.btn-circle.print:hover {
+    background: #c62828;
+    color: white;
+}

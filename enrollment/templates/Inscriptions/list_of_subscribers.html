@@ -1,0 +1,84 @@
+{% extends 'Registration/base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Lista de Inscritos{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'enrollments/css/list_of_subscribers.css' %}?v=1" />
+
+<div class="list-container-wrapper">
+    <div class="enroll-list-card">
+        
+        <div class="list-header">
+            <div class="header-info">
+                <h3><i class="fa-solid fa-list-check"></i> Registro de Inscritos 2026</h3>
+                <span class="module-badge">Control Académico</span>
+            </div>
+            <div class="header-actions">
+                <a href="{% url 'registrar_inscripcion_view' %}" class="btn-new-enroll">
+                    <i class="fa-solid fa-user-plus"></i> Nueva Inscripción
+                </a>
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <form action="#" class="combined-search-form">
+                <div class="search-box">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    <input type="text" placeholder="Buscar por RUDE, CI o Apellidos...">
+                </div>
+                <div class="select-box">
+                    <select name="curso">
+                        <option value="">Todos los cursos</option>
+                        <option value="1">1ro Primaria - A</option>
+                        <option value="2">2do Primaria - B</option>
+                    </select>
+                </div>
+            </form>
+        </div>
+
+        <div class="list-body">
+            <table class="enroll-table">
+                <thead>
+                    <tr>
+                        <th style="width: 50px;">#</th>
+                        <th>Fecha</th>
+                        <th>Estudiante / Tutor</th>
+                        <th>Grado y Paralelo</th>
+                        <th>Código RUDE</th>
+                        <th style="text-align: center;">Documentos</th>
+                        <th style="text-align: center;">Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="row-number">1</span></td>
+                        <td class="date-cell">19/04/2026</td>
+                        <td>
+                            <div class="subscriber-info">
+                                <span class="subscriber-name">Mamani Cruz, Ronaldo Antonio</span>
+                                <small class="tutor-sub">Tutor: Mamani Ronaldo</small>
+                            </div>
+                        </td>
+                        <td>
+                            <span class="grade-badge">6to Primaria - A</span>
+                        </td>
+                        <td>
+                            <span class="rude-badge">8067000120101A</span>
+                        </td>
+                        <td style="text-align: center;">
+                            <span class="doc-badge complete">
+                                <i class="fa-solid fa-circle-check"></i> Completo
+                            </span>
+                        </td>
+                        <td class="actions-cell">
+                            <a href="#" class="btn-circle view" title="Ver Detalle"><i class="fa-solid fa-eye"></i></a>
+                            <a href="#" class="btn-circle print" title="Imprimir Formulario"><i class="fa-solid fa-print"></i></a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

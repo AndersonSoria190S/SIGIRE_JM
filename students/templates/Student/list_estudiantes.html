@@ -4,7 +4,7 @@
 {% block page_title %}Gestión de Estudiantes{% endblock %}
 
 {% block content %}
-<link rel="stylesheet" href="{% static 'students/css/list_estudiantes.css' %}?v=6" />
+<link rel="stylesheet" href="{% static 'students/css/list_estudiantes.css' %}?v=7" />
 
 <div class="list-container-wrapper">
     <div class="student-list-card">
@@ -102,14 +102,26 @@
                             </div>
                         </td>
 
-                        <td>
-                            {% if estudiante.correo_electronico %}
-                                <a href="mailto:{{ estudiante.correo_electronico }}" class="email-link">
-                                    <i class="fa-solid fa-envelope"></i> Email
-                                </a>
-                            {% else %}
-                                <span class="no-data" style="color: #94a3b8; font-size: 0.85rem;">Sin correo</span>
-                            {% endif %}
+                        <td class="contact-cell">
+                            <div class="contact-actions">
+                                {% if estudiante.correo_electronico %}
+                                    <a href="mailto:{{ estudiante.correo_electronico }}" class="contact-badge email-badge" title="Enviar correo a: {{ estudiante.correo_electronico }}">
+                                        <i class="fa-solid fa-envelope"></i> Email
+                                    </a>
+                                {% else %}
+                                    <span class="contact-badge no-contact" title="Sin correo registrado">
+                                        <i class="fa-solid fa-envelope-circle-xmark"></i>
+                                    </span>
+                                {% endif %}
+                        
+                                {% if estudiante.direccion %}
+                                    <button type="button" class="contact-badge address-badge" 
+                                            onclick="verDireccion('{{ estudiante.nombres|escapejs }}', '{{ estudiante.direccion|escapejs }}')" 
+                                            title="Ver Dirección de Domicilio">
+                                        <i class="fa-solid fa-map-location-dot"></i>
+                                    </button>
+                                {% endif %}
+                            </div>
                         </td>
 
                         <td style="text-align: center;">
@@ -169,5 +181,5 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script src="{% static 'students/js/list_estudiantes.js' %}?v=4"></script>
+<script src="{% static 'students/js/list_estudiantes.js' %}?v=7"></script>
 {% endblock %}

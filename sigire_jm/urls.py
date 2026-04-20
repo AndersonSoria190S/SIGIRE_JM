@@ -3,6 +3,7 @@ from django.urls import path, include
 from accounts import views as accounts_views
 from academic import views as academic_views
 from students import views as students_views
+from enrollment import views as enrollment_views
 from accounts.views import UserPasswordChangeView
 
 urlpatterns = [
@@ -68,4 +69,13 @@ urlpatterns = [
 
     path('editar/<str:pk>/', students_views.editar_estudiante, name='editar_estudiante'),
 
+    path('inscripciones/registrar/', enrollment_views.registrar_inscripcion_view, name='registrar_inscripcion_view'),
+
+    path('inscripciones/lista/', enrollment_views.list_inscripciones, name='list_inscripciones'),
+    
+    path('requisitos/crear/', enrollment_views.crear_requisito, name='crear_requisito'),
+
+    path('requisitos/eliminar/<int:pk>/', enrollment_views.eliminar_requisito, name='eliminar_requisito'),
+
+    path('requisitos/editar/<int:pk>/', enrollment_views.editar_requisito, name='editar_requisito'),
 ]

@@ -1,0 +1,114 @@
+{% extends 'Registration/base_admin.html' %}
+{% load static %}
+
+{% block page_title %}Formulario de Inscripción{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'enrollments/css/form_enrollment.css' %}?v=1" />
+
+<div class="enroll-container">
+    <div class="enroll-card">
+        
+        <div class="enroll-card-header">
+            <div class="header-text">
+                <h3><i class="fa-solid fa-file-signature"></i> Nueva Inscripción Académica</h3>
+                <p>Gestión Escolar: <strong>{{ gestion_actual|default:"2026" }}</strong></p>
+            </div>
+            <div class="header-badge">
+                <span class="badge-process">En Proceso</span>
+            </div>
+        </div>
+
+        <form action="#" method="POST" class="enroll-form-body">
+            {% csrf_token %}
+
+            <div class="enroll-layout-grid">
+                
+                <div class="enroll-column-main">
+                    
+                    <div class="form-section">
+                        <h4 class="section-subtitle"><i class="fa-solid fa-user-graduate"></i> Datos del Estudiante</h4>
+                        <div class="student-info-banner">
+                            <div class="student-avatar">
+                                <i class="fa-solid fa-user-tie"></i>
+                            </div>
+                            <div class="student-data">
+                                <strong>{{ estudiante.apellido_paterno }} {{ estudiante.apellido_materno }}, {{ estudiante.nombres }}</strong>
+                                <span>CI: {{ estudiante.cedula_identidad|default:"27382332 PT" }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4 class="section-subtitle"><i class="fa-solid fa-school"></i> Asignación de Grado</h4>
+                        <div class="input-row">
+                            <div class="form-group">
+                                <label>Paralelo / Curso</label>
+                                <select name="paralelo" class="enroll-input" required>
+                                    <option value="">Seleccione el curso...</option>
+                                    <option value="1">1ro Primaria - A</option>
+                                    <option value="2">1ro Primaria - B</option>
+                                    <option value="3">2do Primaria - A</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Código RUDE</label>
+                                <input type="text" name="rude" class="enroll-input" placeholder="Ej: 8067000..." required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4 class="section-subtitle"><i class="fa-solid fa-comment-dots"></i> Observaciones</h4>
+                        <textarea name="observacion" class="enroll-textarea" placeholder="¿Alguna nota especial sobre esta inscripción?"></textarea>
+                    </div>
+                </div>
+
+                <div class="enroll-column-side">
+                    <div class="requirements-box">
+                        <h4 class="section-subtitle"><i class="fa-solid fa-folder-open"></i> Entrega de Requisitos</h4>
+                        <p class="requirements-hint">Marque los documentos entregados físicamente:</p>
+                        
+                        <div class="requirements-checklist">
+                            <label class="check-item">
+                                <input type="checkbox" name="requisitos" value="1">
+                                <span class="check-custom"></span>
+                                <span class="check-text">Certificado de Nacimiento</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" name="requisitos" value="2">
+                                <span class="check-custom"></span>
+                                <span class="check-text">Fotocopia de CI (Estudiante)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" name="requisitos" value="3">
+                                <span class="check-custom"></span>
+                                <span class="check-text">Fotocopia de CI (Tutor)</span>
+                            </label>
+                            <label class="check-item">
+                                <input type="checkbox" name="requisitos" value="4">
+                                <span class="check-custom"></span>
+                                <span class="check-text">Libreta de Calificaciones (Gestión Anterior)</span>
+                            </label>
+                        </div>
+
+                        <div class="requirements-info">
+                            <i class="fa-solid fa-circle-info"></i>
+                            <span>Los documentos no marcados quedarán como "Pendientes".</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="enroll-form-footer">
+                <button type="submit" class="btn-confirm-enroll">
+                    <i class="fa-solid fa-file-import"></i> Confirmar Inscripción
+                </button>
+                <a href="{% url 'list_estudiantes' %}" class="btn-cancel-enroll">Cancelar</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+{% endblock %}

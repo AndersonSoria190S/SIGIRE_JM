@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function () {
-    console.log("🚀 Lógica académica inicializada (Versión Premium).");
 
     const selectNivel = document.querySelector('select[name="nivel"]');
     const selectGrado = document.querySelector('select[name="grado"]');
@@ -130,4 +129,72 @@ window.addEventListener('click', (e) => {
     const modal = document.getElementById('modalParalelo');
     
     if (e.target === modal) cerrarModal();
+    
 });
+
+let urlCrearRequisitoOriginal = '';
+let nombreOriginalRequisito = ''; 
+
+document.addEventListener('DOMContentLoaded', function () {
+    const formRequisito = document.getElementById('formRequisito');
+    const inputNombreReq = document.getElementById('inputNombreReq');
+    const btnUpdateReq = document.getElementById('btnUpdateReq');
+
+    if (formRequisito) {
+        urlCrearRequisitoOriginal = formRequisito.action;
+    }
+
+    if (inputNombreReq && btnUpdateReq) {
+        inputNombreReq.addEventListener('input', function() {
+            if (btnUpdateReq.style.display !== 'none') {
+                const valorActual = inputNombreReq.value.trim();
+                if (valorActual === '' || valorActual === nombreOriginalRequisito) {
+                    btnUpdateReq.disabled = true;
+                } else {
+                    btnUpdateReq.disabled = false;
+                }
+            }
+        });
+    }
+});
+
+function cargarEdicion(id, nombre) {
+    const form = document.getElementById('formRequisito');
+    const input = document.getElementById('inputNombreReq');
+    const btnAdd = document.getElementById('btnAddReq');
+    const btnUpdate = document.getElementById('btnUpdateReq');
+    const btnCancel = document.getElementById('btnCancelReq');
+
+    nombreOriginalRequisito = nombre.trim();
+
+    input.value = nombreOriginalRequisito;
+    input.focus();
+
+    form.action = `/requisitos/editar/${id}/`;
+
+    btnAdd.style.display = 'none';
+    btnAdd.disabled = true;
+
+    btnUpdate.style.display = 'flex';
+    btnCancel.style.display = 'flex';
+
+    btnUpdate.disabled = true; 
+}
+
+function cancelarEdicion() {
+    const form = document.getElementById('formRequisito');
+    const input = document.getElementById('inputNombreReq');
+    const btnAdd = document.getElementById('btnAddReq');
+    const btnUpdate = document.getElementById('btnUpdateReq');
+    const btnCancel = document.getElementById('btnCancelReq');
+
+    input.value = '';
+    nombreOriginalRequisito = '';
+    form.action = urlCrearRequisitoOriginal;
+
+    btnAdd.style.display = 'flex';
+    btnAdd.disabled = false;
+
+    btnUpdate.style.display = 'none';
+    btnCancel.style.display = 'none';
+}
