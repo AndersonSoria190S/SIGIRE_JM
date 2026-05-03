@@ -13,6 +13,8 @@ import os
 import ssl
 from pathlib import Path
 from dotenv import load_dotenv
+import urllib.parse
+import dj_database_url
 
 
 
@@ -35,6 +37,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'django_extensions',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -84,11 +87,24 @@ WSGI_APPLICATION = 'sigire_jm.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/6.0/ref/settings/#databases
 
+
+#Configuracion de la base de datos para Supabase
+
+DB_USER = 'postgres'
+DB_PASS = 'ix9N2FwNvb-FfHd' 
+DB_HOST = 'db.lcixvwhnbgyyqckdbzhn.supabase.co'
+DB_PORT = '5432'
+DB_NAME = 'postgres'
+
+PASSWORD_SAFE = urllib.parse.quote_plus(DB_PASS)
+
+SUPABASE_URL = f'postgresql://{DB_USER}:{PASSWORD_SAFE}@{DB_HOST}:{DB_PORT}/{DB_NAME}'
+
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'DBJesusMaria.db',
-    }
+    'default': dj_database_url.config(
+        default=SUPABASE_URL,
+        conn_max_age=600
+    )
 }
 
 

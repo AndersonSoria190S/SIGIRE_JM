@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}?v=16" />
+  <link rel="stylesheet" href="{% static 'academic/css/structure_academic.css' %}?v=19" />
 
   <div class="academic-dashboard">
     <div class="header-section">
@@ -212,6 +212,7 @@
       </div>
     </div>
 
+  <!-- Modal de Asignación de Paralelo (CORREGIDO) -->
   <div id="modalParalelo" class="modal-overlay">
     <div class="modal-content-premium">
       <div class="modal-header-premium">
@@ -220,17 +221,17 @@
       </div>
 
       <div class="modal-body-premium">
-        <form action="{% url 'crear_paralelo' %}" method="post">
+        <form action="{% url 'crear_paralelo' %}" method="post" class="form-modal-flex">
           {% csrf_token %}
 
           <div class="form-group-premium">
             <label><i class="fa-solid fa-layer-group"></i> Nivel Educativo:</label>
-            <div class="select-wrapper">{{ form_paralelo.nivel }}</div>
+            <div class="select-wrapper-premium">{{ form_paralelo.nivel }}</div>
           </div>
 
           <div class="form-group-premium">
             <label><i class="fa-solid fa-graduation-cap"></i> Grado de Destino:</label>
-            <div class="select-wrapper">{{ form_paralelo.grado }}</div>
+            <div class="select-wrapper-premium">{{ form_paralelo.grado }}</div>
           </div>
 
           <div class="info-box-premium">
@@ -243,7 +244,9 @@
             </div>
           </div>
 
-          <button type="submit" class="btn-submit-premium"><i class="fa-solid fa-bolt"></i> Generar Paralelo</button>
+          <button type="submit" class="btn-submit-premium">
+            <i class="fa-solid fa-bolt"></i> Generar Paralelo
+          </button>
         </form>
       </div>
     </div>

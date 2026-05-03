@@ -119,20 +119,37 @@
 
 .btn-save-academic:active { transform: translateY(0); }
 
+
 .btn-back {
-    display: inline-flex;
+    display: flex;             
     align-items: center;
     justify-content: center;
     width: 100%;
-    margin-top: 20px;
-    padding: 12px;
+    margin-top: 15px;
+    padding: 18px;            
+    background-color: #f8fafc; 
     color: #64748b;
+    border: 2px solid #e2e8f0; 
+    border-radius: 14px;    
     text-decoration: none;
-    font-weight: 600;
-    transition: 0.2s;
+    font-weight: 800;          
+    font-size: 1.2rem;       
+    gap: 12px;                
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); 
+    box-sizing: border-box;  
 }
 
-.btn-back:hover { color: #1e293b; }
+.btn-back:hover {
+    background-color: #fff1f2; 
+    color: #e11d48;           
+    border-color: #fecaca;
+    transform: translateY(-3px); 
+    box-shadow: 0 10px 15px -3px rgba(225, 29, 72, 0.1);
+}
+
+.btn-back:active {
+    transform: translateY(0);
+}
 
 .btn-save-academic:disabled {
     background-color: #cbd5e1 !important; 
