@@ -8,9 +8,6 @@
    ========================================================= */
 
 :root {
-  --primary-color: #c62828;
-  --primary-hover: #b71c1c;
-
   --secondary-color: #1e293b;
   --secondary-light: #334155;
 
@@ -180,7 +177,7 @@
 
   background:
     radial-gradient(circle at bottom right, rgba(255, 255, 255, 0.11), transparent 30%),
-    linear-gradient(145deg, #0f172a, #334155);
+    linear-gradient(145deg, #9e2a7b, #42b632);
 
   box-shadow: var(--shadow-medium);
 }
@@ -1091,4 +1088,11 @@
   .error-text {
     font-size: 0.78rem;
   }
+
+}
+  
+  
+.student-info-panel {
+  background: linear-gradient(145deg, #9e2a7b, #42b632) !important;
+  color: #ffffff;
 }
